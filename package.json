@@ -4,7 +4,7 @@
   "description": "Unit component for PORTACS project",
   "main": "main.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/**/*.ts" 
+    "test": "mocha -r ts-node/register src/test/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/lineCode-swe/unit#readme",
   "dependencies": {
+    "@types/node": "^15.3.0",
+    "mongodb": "^3.6.6",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^9.1.1",
     "tsyringe": "^4.5.0",
