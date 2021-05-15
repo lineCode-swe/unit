@@ -28,6 +28,7 @@
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
     "chai": "^4.3.4",
-    "mocha": "^8.4.0"
+    "mocha": "^8.4.0",
+    "ts-mockito": "^2.6.1"
   }
 }
