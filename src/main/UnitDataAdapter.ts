@@ -1,5 +1,4 @@
 import { Position } from "./Position";
-import {throws} from "assert";
 
 const {MongoClient} = require('mongodb');
 
