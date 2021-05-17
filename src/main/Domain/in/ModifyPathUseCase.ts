@@ -1,5 +1,5 @@
 import {Position} from "../../Position";
 
-export interface StartReceivedUseCase {
+export interface ModifyPathUseCase {
     receivedNewPath(msg: Position[]): void;
 }

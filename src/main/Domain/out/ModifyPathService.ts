@@ -1,8 +1,8 @@
-import {StartReceivedUseCase} from "../in/StartReceivedUseCase";
+import {ModifyPathUseCase} from "../in/ModifyPathUseCase";
 import {ModifyPathOutbound} from "../../Persistence/in/ModifyPathOutbound";
 import {Position} from "../../Position";
 
-class ModifyPathService implements StartReceivedUseCase {
+class ModifyPathService implements ModifyPathUseCase {
     public outbound: ModifyPathOutbound;
 
     constructor(outbound: ModifyPathOutbound) {
