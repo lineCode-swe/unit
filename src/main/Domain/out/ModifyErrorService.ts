@@ -8,7 +8,7 @@ class ModifyErrorService implements ModifyErrorUseCase {
         this.outbound = outbound;
     }
 
-    modifyError(err: string): void {
+    modifyError(err: number): void {
         this.outbound.errorToMongo(err);
     }
 }

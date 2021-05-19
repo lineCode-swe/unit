@@ -8,9 +8,9 @@ class CheckUnitErrorService implements CheckUnitErrorUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitError(): string {
+    checkIfUnitError(): number {
         // const response = await this.outbound.loadError();
 
-        return "";
+        return -1;
     }
 }

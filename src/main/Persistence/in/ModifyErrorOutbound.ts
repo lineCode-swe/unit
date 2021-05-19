@@ -1,3 +1,3 @@
 export interface ModifyErrorOutbound {
-    errorToMongo(error: string): Promise<void>;
+    errorToMongo(error: number): Promise<void>;
 }

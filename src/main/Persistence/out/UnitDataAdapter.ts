@@ -13,6 +13,7 @@ import { ModifySpeedOutbound } from "../in/ModifySpeedOutbound";
 import { UnitChangedSpeedOutbound } from "../in/UnitChangedSpeedOutbound";
 import { ModifyErrorOutbound } from "../in/ModifyErrorOutbound";
 import { CheckErrorOutbound } from "../in/CheckErrorOutbound";
+import {UnitStatus} from "../../UnitStatus";
 
 const {MongoClient} = require('mongodb');
 
@@ -141,12 +142,12 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         }
     }
 
-    async statusToMongo(status: string): Promise<void> {
+    async statusToMongo(status: UnitStatus): Promise<void> {
         try {
             await this.client.connect();
             const collection = this.client.db('Unit').collection('details');
 
-            const query = { status: String };
+            const query = { status: UnitStatus };
             const update = { $set: { 'status': status }};
             const options = { upsert: true };
 
@@ -160,7 +161,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         }
     }
 
-    async loadStatus(): Promise<string> {
+    async loadStatus(): Promise<UnitStatus> {
         try {
             await this.client.connect();
             const collection = this.client.db('Unit').collection('details');
@@ -169,7 +170,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
-            return results[0] as string;
+            return results[0] as UnitStatus;
         }
         catch (e) {
             throw(e);
@@ -179,12 +180,12 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         }
     }
 
-    async errorToMongo(error: string): Promise<void> {
+    async errorToMongo(error: number): Promise<void> {
         try {
             await this.client.connect();
             const collection = this.client.db('Unit').collection('details');
 
-            const query = { error: String };
+            const query = { error: Number };
             const update = { $set: { 'error': error }};
             const options = { upsert: true };
 
@@ -198,7 +199,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         }
     }
 
-    async loadError(): Promise<string> {
+    async loadError(): Promise<number> {
         try {
             await this.client.connect();
             const collection = this.client.db('Unit').collection('details');
@@ -207,7 +208,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
-            return results[0] as string;
+            return results[0] as number;
         }
         catch (e) {
             throw(e);
