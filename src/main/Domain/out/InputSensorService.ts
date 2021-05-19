@@ -1,5 +1,6 @@
 import {InputSensorUseCase} from "../in/InputSensorUseCase";
 import {InputSensorsOutbound} from "../../Persistence/in/InputSensorsOutbound";
+import {Position} from "../../Position";
 
 class InputSensorService implements InputSensorUseCase {
     public outbound: InputSensorsOutbound;
@@ -8,8 +9,7 @@ class InputSensorService implements InputSensorUseCase {
         this.outbound = outbound;
     }
 
-    receivedObstacle(msg: string): void {
-        // msg -> obstacles: Position[]
-        // this.outbound.obstaclesToMongo(obstacles);
+    receivedObstacle(obs: Position[]): void {
+        this.outbound.obstaclesToMongo(obs);
     }
 }

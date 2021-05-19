@@ -9,10 +9,7 @@ class LoadPathService implements LoadPathUseCase {
         this.outbound = outbound;
     }
 
-    loadPath(): Position[] {
-        // const response = await this.outbound.loadPath();;
-
-        let temporary: Position[] = [];
-        return temporary;
+    async loadPath(): Promise<Position[]> {
+        return await this.outbound.loadPath();
     }
 }

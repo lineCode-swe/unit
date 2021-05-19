@@ -9,9 +9,7 @@ class CheckObstaclesService implements CheckObstaclesUseCase {
         this.outbound = outbound;
     }
 
-    checkObstacles(obs: Position): boolean {
-        // this.outbound.loadObstacles();
-
-        return false;
+    async checkObstacles(): Promise<Position[]> {
+        return this.outbound.loadObstacles();
     }
 }

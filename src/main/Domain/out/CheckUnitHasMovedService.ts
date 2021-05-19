@@ -9,9 +9,7 @@ class CheckUnitHasMovedService implements CheckUnitHasMovedUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitHasMoved(): Position {
-        // const response = await this.outbound.loadPosition();
-
-        return new Position(1, 1);
+    async checkIfUnitHasMoved(): Promise<Position> {
+        return await this.outbound.loadPosition();
     }
 }

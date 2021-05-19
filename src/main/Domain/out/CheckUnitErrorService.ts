@@ -8,9 +8,7 @@ class CheckUnitErrorService implements CheckUnitErrorUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitError(): number {
-        // const response = await this.outbound.loadError();
-
-        return -1;
+    async checkIfUnitError(): Promise<number> {
+        return await this.outbound.loadError();
     }
 }

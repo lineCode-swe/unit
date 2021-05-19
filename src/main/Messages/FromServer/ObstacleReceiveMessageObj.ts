@@ -2,9 +2,9 @@ import {Position} from "../../Position";
 
 class ObstacleReceiveMessageObj {
     public type: string;
-    public obstacle: Position;
+    public obstacle: Position[];
 
-    constructor(type: string, obstacle: Position) {
+    constructor(type: string, obstacle: Position[]) {
         this.type = type;
         this.obstacle = obstacle;
     }
@@ -13,7 +13,7 @@ class ObstacleReceiveMessageObj {
         return this.type;
     }
 
-    getObstacle(): Position {
+    getObstacle(): Position[] {
         return this.obstacle;
     }
 }

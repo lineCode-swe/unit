@@ -1,3 +1,3 @@
 export interface CheckUnitRequestPathUseCase {
-    checkIfUnitRequestPath(): boolean;
+    checkIfUnitRequestPath(): Promise<boolean>;
 }

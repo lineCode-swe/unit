@@ -1,5 +1,5 @@
 import {Position} from "../../Position";
 
 export interface CheckUnitHasMovedUseCase {
-    checkIfUnitHasMoved(): Position;
+    checkIfUnitHasMoved(): Promise<Position>;
 }

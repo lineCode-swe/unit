@@ -8,7 +8,7 @@ class CheckUnitChangedSpeedService implements CheckUnitChangedSpeedUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitChangedSpeed(): void {
-        // this.outbound.loadSpeed();
+    async checkIfUnitChangedSpeed(): Promise<number> {
+        return await this.outbound.loadSpeed();
     }
 }

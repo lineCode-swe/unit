@@ -24,7 +24,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
                                         ModifyErrorOutbound, CheckErrorOutbound {
    
     private client: any;
-    private url: string;
+    private readonly url: string;
 
     constructor() {
         this.url = "mongodb://localhost:27017/mydb";

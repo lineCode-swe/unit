@@ -9,7 +9,7 @@ class ModifyPathService implements ModifyPathUseCase {
         this.outbound = outbound;
     }
 
-    receivedNewPath(msg: Position[]): void {
-        this.outbound.pathToMongo(msg);
+    receivedNewPath(path: Position[]): void {
+        this.outbound.pathToMongo(path);
     }
 }

@@ -1,6 +1,5 @@
 import {CheckUnitRequestPathUseCase} from "../in/CheckUnitRequestPathUseCase";
 import {UnitPathRequestOutbound} from "../../Persistence/in/UnitPathRequestOutbound";
-import {Position} from "../../Position";
 
 class CheckUnitRequestPathService implements CheckUnitRequestPathUseCase {
     public outbound: UnitPathRequestOutbound;
@@ -9,9 +8,7 @@ class CheckUnitRequestPathService implements CheckUnitRequestPathUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitRequestPath(): boolean {
-        // const response = await this.outbound.loadPathRequest();
-
-        return false;
+    async checkIfUnitRequestPath(): Promise<boolean> {
+        return await this.outbound.loadPathRequest();
     }
 }

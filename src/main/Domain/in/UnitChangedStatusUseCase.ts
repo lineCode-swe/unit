@@ -1,5 +1,5 @@
-// import { UnitStatus } from "../../UnitStatus";
+import { UnitStatus } from "../../UnitStatus";
 
 export interface UnitChangedStatusUseCase {
-    checkIfUnitChangedStatus(): string;
+    checkIfUnitChangedStatus(): Promise<UnitStatus>;
 }

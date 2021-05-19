@@ -1,5 +1,6 @@
 // import {ObstacleMessageObj} from "../../ObstacleMessageObj";
+import {Position} from "../../Position";
 
 export interface InputSensorUseCase {
-    receivedObstacle(msg: string): void;
+    receivedObstacle(obs: Position[]): void;
 }

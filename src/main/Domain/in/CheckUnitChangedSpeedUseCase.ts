@@ -1,3 +1,3 @@
 export interface CheckUnitChangedSpeedUseCase {
-    checkIfUnitChangedSpeed(): void;
+    checkIfUnitChangedSpeed(): Promise<number>;
 }

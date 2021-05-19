@@ -1,5 +1,5 @@
-// import { StatusMessageObj } from "../../UnitSpeed";
+import { UnitStatus } from "../../UnitStatus";
 
 export interface ModifyStatusUseCase {
-    modifyStatus(msg: string): void;
+    modifyStatus(status: UnitStatus): void;
 }

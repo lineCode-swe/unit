@@ -1,5 +1,6 @@
 import {UnitChangedStatusUseCase} from "../in/UnitChangedStatusUseCase";
 import {UnitChangedStatusOutbound} from "../../Persistence/in/UnitChangedStatusOutbound";
+import {UnitStatus} from "../../UnitStatus";
 
 class UnitChangedStatusService implements UnitChangedStatusUseCase {
     public outbound: UnitChangedStatusOutbound;
@@ -8,9 +9,7 @@ class UnitChangedStatusService implements UnitChangedStatusUseCase {
         this.outbound = outbound;
     }
 
-    checkIfUnitChangedStatus(): string {
-        // this.outbound.loadStatus();
-
-        return "";
+    async checkIfUnitChangedStatus(): Promise<UnitStatus> {
+        return await this.outbound.loadStatus();
     }
 }

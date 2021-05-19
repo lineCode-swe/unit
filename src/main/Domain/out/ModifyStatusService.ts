@@ -1,5 +1,6 @@
 import {ModifyStatusUseCase} from "../in/ModifyStatusUseCase";
 import {ModifyStatusOutbound} from "../../Persistence/in/ModifyStatusOutbound";
+import {UnitStatus} from "../../UnitStatus";
 
 class ModifyStatusService implements ModifyStatusUseCase {
     public outbound: ModifyStatusOutbound;
@@ -8,7 +9,7 @@ class ModifyStatusService implements ModifyStatusUseCase {
         this.outbound = outbound;
     }
 
-    modifyStatus(msg: string): void {
-        this.outbound.statusToMongo(msg);
+    modifyStatus(status: UnitStatus): void {
+        this.outbound.statusToMongo(status);
     }
 }
