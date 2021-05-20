@@ -1,12 +1,11 @@
 import {CheckUnitErrorUseCase} from "../in/CheckUnitErrorUseCase";
 import {CheckErrorOutbound} from "../../Persistence/in/CheckErrorOutbound";
+import {inject, injectable} from "tsyringe";
 
+@injectable()
 class CheckUnitErrorService implements CheckUnitErrorUseCase {
-    public outbound: CheckErrorOutbound;
 
-    constructor(outbound: CheckErrorOutbound) {
-        this.outbound = outbound;
-    }
+    constructor(@inject("CheckErrorOutbound") private outbound: CheckErrorOutbound) {}
 
     async checkIfUnitError(): Promise<number> {
         return await this.outbound.loadError();

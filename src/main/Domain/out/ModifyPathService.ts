@@ -1,13 +1,12 @@
 import {ModifyPathUseCase} from "../in/ModifyPathUseCase";
 import {ModifyPathOutbound} from "../../Persistence/in/ModifyPathOutbound";
 import {Position} from "../../Position";
+import {inject, injectable} from "tsyringe";
 
+@injectable()
 class ModifyPathService implements ModifyPathUseCase {
-    public outbound: ModifyPathOutbound;
 
-    constructor(outbound: ModifyPathOutbound) {
-        this.outbound = outbound;
-    }
+    constructor(@inject("ModifyPathOutbound") private outbound: ModifyPathOutbound) {}
 
     receivedNewPath(path: Position[]): void {
         this.outbound.pathToMongo(path);

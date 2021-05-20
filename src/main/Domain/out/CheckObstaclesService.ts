@@ -9,6 +9,6 @@ class CheckObstaclesService implements CheckObstaclesUseCase {
     constructor(@inject("ObstaclesOutbound") private outbound: ObstaclesOutbound) {}
 
     async checkObstacles(): Promise<Position[]> {
-        return this.outbound.loadObstacles();
+        return await this.outbound.loadObstacles();
     }
 }

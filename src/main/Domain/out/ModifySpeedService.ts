@@ -1,12 +1,11 @@
 import {ModifySpeedUseCase} from "../in/ModifySpeedUseCase";
 import {ModifySpeedOutbound} from "../../Persistence/in/ModifySpeedOutbound";
+import {inject, injectable} from "tsyringe";
 
+@injectable()
 class ModifySpeedService implements ModifySpeedUseCase {
-    public outbound: ModifySpeedOutbound;
 
-    constructor(outbound: ModifySpeedOutbound) {
-        this.outbound = outbound;
-    }
+    constructor(@inject("ModifySpeedOutbound") private outbound: ModifySpeedOutbound) {}
 
     modifySpeed(speed: number): void {
         this.outbound.speedToMongo(speed);
