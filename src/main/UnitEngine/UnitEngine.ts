@@ -41,6 +41,7 @@ export class UnitEngine {
     };
 
     async begin(): Promise<void> {
+        console.log("Unit is running");
         while(status != UnitStatus.SHUTDOWN) {
             if(status == UnitStatus.STOP) {
                 var new_path = await this.LoadPath.loadPath();
@@ -49,6 +50,7 @@ export class UnitEngine {
                     this.status = UnitStatus.START;
                     this.setStatus(this.status);
                 }
+                await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
             while(status == UnitStatus.START) {
                 if(this.curr_path_pos < this.curr_path_length) {
@@ -89,5 +91,9 @@ export class UnitEngine {
 
     setPathRequest(new_path_request: boolean): void {
         this.ModifyPathRequest.receivedNewPathRequest(new_path_request);
+    }
+
+    printHello(): void {
+        console.log("Hello, DI is working");
     }
 }
