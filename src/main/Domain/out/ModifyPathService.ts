@@ -4,7 +4,7 @@ import {Position} from "../../Position";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class ModifyPathService implements ModifyPathUseCase {
+export class ModifyPathService implements ModifyPathUseCase {
 
     constructor(@inject("ModifyPathOutbound") private outbound: ModifyPathOutbound) {}
 

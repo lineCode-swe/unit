@@ -4,7 +4,7 @@ import {UnitStatus} from "../../UnitStatus";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class ModifyStatusService implements ModifyStatusUseCase {
+export class ModifyStatusService implements ModifyStatusUseCase {
 
     constructor(@inject("ModifyStatusOutbound") private outbound: ModifyStatusOutbound) {}
 

@@ -3,7 +3,7 @@ import { UnitChangedSpeedOutbound} from "../../Persistence/in/UnitChangedSpeedOu
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class CheckUnitChangedSpeedService implements CheckUnitChangedSpeedUseCase {
+export class CheckUnitChangedSpeedService implements CheckUnitChangedSpeedUseCase {
 
     constructor(@inject("UnitChangedSpeedOutbound") private outbound: UnitChangedSpeedOutbound) {}
 

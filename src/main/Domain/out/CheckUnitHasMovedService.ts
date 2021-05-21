@@ -4,7 +4,7 @@ import {Position} from "../../Position";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class CheckUnitHasMovedService implements CheckUnitHasMovedUseCase {
+export class CheckUnitHasMovedService implements CheckUnitHasMovedUseCase {
 
     constructor(@inject("UnitHasMovedOutbound") private outbound: UnitHasMovedOutbound) {}
 

@@ -3,7 +3,7 @@ import {ModifyErrorOutbound} from "../../Persistence/in/ModifyErrorOutbound";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class ModifyErrorService implements ModifyErrorUseCase {
+export class ModifyErrorService implements ModifyErrorUseCase {
 
     constructor(@inject("ModifyErrorOutbound") private outbound: ModifyErrorOutbound) {}
 

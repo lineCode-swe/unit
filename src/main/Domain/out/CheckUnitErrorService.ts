@@ -3,7 +3,7 @@ import {CheckErrorOutbound} from "../../Persistence/in/CheckErrorOutbound";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class CheckUnitErrorService implements CheckUnitErrorUseCase {
+export class CheckUnitErrorService implements CheckUnitErrorUseCase {
 
     constructor(@inject("CheckErrorOutbound") private outbound: CheckErrorOutbound) {}
 

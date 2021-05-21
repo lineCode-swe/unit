@@ -4,7 +4,7 @@ import {Position} from "../../Position";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class ModifyPositionService implements ModifyPositionUseCase {
+export class ModifyPositionService implements ModifyPositionUseCase {
 
     constructor(@inject("ModifyPositionOutbound") private outbound: ModifyPositionOutbound) {}
 

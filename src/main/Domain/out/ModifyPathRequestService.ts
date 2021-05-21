@@ -3,7 +3,7 @@ import {ModifyPathRequestOutbound} from "../../Persistence/in/ModifyPathRequestO
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class ModifyPathRequestService implements ModifyPathRequestUseCase {
+export class ModifyPathRequestService implements ModifyPathRequestUseCase {
 
     constructor(@inject("ModifyPathRequestOutbound") private outbound: ModifyPathRequestOutbound) {}
 

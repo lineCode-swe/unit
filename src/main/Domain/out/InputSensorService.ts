@@ -4,7 +4,7 @@ import {Position} from "../../Position";
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class InputSensorService implements InputSensorUseCase {
+export class InputSensorService implements InputSensorUseCase {
 
     constructor(@inject("InputSensorsOutbound") private outbound: InputSensorsOutbound) {}
 

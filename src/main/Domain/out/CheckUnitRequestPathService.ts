@@ -3,7 +3,7 @@ import {UnitPathRequestOutbound} from "../../Persistence/in/UnitPathRequestOutbo
 import {inject, injectable} from "tsyringe";
 
 @injectable()
-class CheckUnitRequestPathService implements CheckUnitRequestPathUseCase {
+export class CheckUnitRequestPathService implements CheckUnitRequestPathUseCase {
 
     constructor(@inject("UnitPathRequestOutbound") private outbound: UnitPathRequestOutbound) {}
 
