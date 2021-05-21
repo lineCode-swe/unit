@@ -36,7 +36,8 @@ export class UnitEngine {
         this.speed = 2500;
         this.status = UnitStatus.STOP;
         this.error = 0;
-        this.slowSpeed = this.speed/2;
+        this.slowSpeed = this.speed*2;
+        this.path_request = false;
     };
 
     async begin(): Promise<void> {
@@ -45,7 +46,7 @@ export class UnitEngine {
                 var new_path = await this.LoadPath.loadPath();
                 if (new_path != this.path) {
                     this.path = new_path;
-                    this.status == UnitStatus.START;
+                    this.status = UnitStatus.START;
                     this.setStatus(this.status);
                 }
             } 
