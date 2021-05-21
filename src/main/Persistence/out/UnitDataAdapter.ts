@@ -50,8 +50,11 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
 
     async loadPath(): Promise<Position[]> {
         try {
-            await this.client.connect();
-            const collection = this.client.db('Unit').collection('path');
+            let url = "mongodb://localhost:27017/mydb";
+            let client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+
+            await client.connect();
+            const collection = client.db('Unit').collection('path');
 
             const projection = { _id: 0, x: 1 , y:1};
             const cursor = collection.find().project(projection);

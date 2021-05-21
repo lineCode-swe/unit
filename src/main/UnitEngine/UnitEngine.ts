@@ -42,17 +42,19 @@ export class UnitEngine {
 
     async begin(): Promise<void> {
         console.log("Unit is running");
-        while(status != UnitStatus.SHUTDOWN) {
-            if(status == UnitStatus.STOP) {
+        while(this.status != UnitStatus.SHUTDOWN) {
+            if(this.status == UnitStatus.STOP) {
                 var new_path = await this.LoadPath.loadPath();
                 if (new_path != this.path) {
                     this.path = new_path;
+                    this.curr_path_length = this.path.length;
+                    this.curr_path_pos = 0;
                     this.status = UnitStatus.START;
                     this.setStatus(this.status);
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
-            while(status == UnitStatus.START) {
+            while(this.status == UnitStatus.START) {
                 if(this.curr_path_pos < this.curr_path_length) {
                     this.curr_pos = this.path[this.curr_path_pos];
                     this.curr_path_pos += 1;

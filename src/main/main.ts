@@ -36,4 +36,6 @@ container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 
 const clientUnitEngine = container.resolve(UnitEngine);
 
+clientUnitEngine.begin();
+
 //clientUnitEngine.printHello()
