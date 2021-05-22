@@ -45,6 +45,8 @@ export class UnitEngine {
         while(this.status != UnitStatus.SHUTDOWN) {
             if(this.status == UnitStatus.STOP) {
                 var new_path = await this.LoadPath.loadPath();
+                console.log(this.path);
+                console.log(new_path);
                 if (new_path != this.path) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
@@ -57,6 +59,7 @@ export class UnitEngine {
             while(this.status == UnitStatus.START) {
                 if(this.curr_path_pos < this.curr_path_length) {
                     this.curr_pos = this.path[this.curr_path_pos];
+                    console.log(this.curr_pos);
                     this.curr_path_pos += 1;
                     this.setPosition(this.curr_pos);
                     await new Promise(resolve => setTimeout(resolve, this.speed));

@@ -7,7 +7,8 @@ import { ModifySpeedService } from "./Domain/out/ModifySpeedService";
 import { ModifyErrorService } from "./Domain/out/ModifyErrorService";
 import { ModifyStatusService } from "./Domain/out/ModifyStatusService";
 import { UnitDataAdapter } from "./Persistence/out/UnitDataAdapter";
-import { UnitEngine } from "./UnitEngine/UnitEngine"; 
+import { UnitEngine } from "./UnitEngine/UnitEngine";
+import {Position} from "./Position";
 
 // DI for UseCase Classes
 container.register("ModifyPositionUseCase", { useClass: ModifyPositionService });
@@ -35,6 +36,15 @@ container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 
 
 const clientUnitEngine = container.resolve(UnitEngine);
+
+let path1 : Position[] = [
+    {x: 1, y: 1},
+    {x: 2, y: 2},
+    {x: 3, y: 3}
+];
+
+let adapter: UnitDataAdapter = new UnitDataAdapter();
+adapter.pathToMongo(path1);
 
 clientUnitEngine.begin();
 
