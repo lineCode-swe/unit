@@ -18,11 +18,13 @@
   "homepage": "https://github.com/lineCode-swe/unit#readme",
   "dependencies": {
     "@types/node": "^15.3.0",
+    "@types/ws": "^7.4.4",
     "mongodb": "^3.6.6",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^9.1.1",
     "tsyringe": "^4.5.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
