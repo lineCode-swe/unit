@@ -155,7 +155,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             await client.connect();
             const collection = client.db('Unit').collection('status');
 
-            const query = { status: UnitStatus };
+            const query = { status: String };
             const update = { $set: { 'status': status }};
             const options = { upsert: true };
 

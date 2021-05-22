@@ -36,22 +36,6 @@ container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 
 
 const clientUnitEngine = container.resolve(UnitEngine);
-/*
-let path1 : Position[] = [
-    {x: 1, y: 1},
-    {x: 2, y: 2},
-    {x: 3, y: 3}
-];
 
-let adapter: UnitDataAdapter = new UnitDataAdapter();
-
-async function setup(): Promise<void> {
-    return await adapter.pathToMongo(path1);
-}
-
-setup();
-console.log("done");
-*/
 clientUnitEngine.begin();
 
-//clientUnitEngine.printHello()
