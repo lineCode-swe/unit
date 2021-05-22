@@ -1,3 +1,5 @@
+import {UnitStatus} from "../../UnitStatus";
+
 export interface UnitChangedStatusOutbound {
-    loadStatus(): Promise<string>; 
+    loadStatus(): Promise<UnitStatus>;
 }

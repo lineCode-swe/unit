@@ -1,3 +1,3 @@
 export interface CheckErrorOutbound {
-    loadError(): Promise<string>;
+    loadError(): Promise<number>;
 }
