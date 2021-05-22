@@ -47,7 +47,7 @@ export class UnitEngine {
                 var new_path = await this.LoadPath.loadPath();
                 console.log(this.path);
                 console.log(new_path);
-                if (new_path != this.path) {
+                if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
