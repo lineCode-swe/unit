@@ -13,7 +13,7 @@ import { ModifySpeedOutbound } from "../in/ModifySpeedOutbound";
 import { UnitChangedSpeedOutbound } from "../in/UnitChangedSpeedOutbound";
 import { ModifyErrorOutbound } from "../in/ModifyErrorOutbound";
 import { CheckErrorOutbound } from "../in/CheckErrorOutbound";
-import {UnitStatus} from "../../UnitStatus";
+import { UnitStatus } from "../../UnitStatus";
 
 const {MongoClient} = require('mongodb');
 

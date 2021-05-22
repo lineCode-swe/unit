@@ -8,7 +8,6 @@ import { ModifyErrorService } from "./Domain/out/ModifyErrorService";
 import { ModifyStatusService } from "./Domain/out/ModifyStatusService";
 import { UnitDataAdapter } from "./Persistence/out/UnitDataAdapter";
 import { UnitEngine } from "./UnitEngine/UnitEngine";
-import {Position} from "./Position";
 
 // DI for UseCase Classes
 container.register("ModifyPositionUseCase", { useClass: ModifyPositionService });
