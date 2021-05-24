@@ -4,7 +4,7 @@ import {UnitStatus} from "./UnitStatus";
 const {MongoClient} = require('mongodb');
 
 async function setupDB(): Promise<void> {
-    let array: Position[] = [new Position(-1, -1)];
+    let array: Position[] = [ new Position(0, 0) ];
     let pos: Position = new Position(0, 0);
     await pathToMongo(array);
     await obstaclesToMongo(array);
@@ -12,7 +12,7 @@ async function setupDB(): Promise<void> {
     await statusToMongo(UnitStatus.SHUTDOWN);
     await errorToMongo(0);
     await speedToMongo(0);
-    await pathRequestToMongo(false);
+    await pathRequestToMongo(true);
 }
 
 async function pathToMongo(path: Position[]): Promise<void> {

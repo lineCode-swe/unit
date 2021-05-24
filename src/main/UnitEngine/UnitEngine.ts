@@ -37,7 +37,7 @@ export class UnitEngine {
         this.status = UnitStatus.STOP;
         this.error = 0;
         this.slowSpeed = this.speed*2;
-        this.path_request = false;
+        this.path_request = true;
     };
 
     async begin(): Promise<void> {
@@ -45,8 +45,6 @@ export class UnitEngine {
         while(this.status != UnitStatus.SHUTDOWN) {
             if(this.status == UnitStatus.STOP) {
                 var new_path = await this.LoadPath.loadPath();
-                console.log(this.path);
-                console.log(new_path);
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
@@ -58,6 +56,7 @@ export class UnitEngine {
             } 
             while(this.status == UnitStatus.START) {
                 if(this.curr_path_pos < this.curr_path_length) {
+                    this.setPathRequest(false);
                     this.curr_pos = this.path[this.curr_path_pos];
                     console.log(this.curr_pos);
                     this.curr_path_pos += 1;

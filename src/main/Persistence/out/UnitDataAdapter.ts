@@ -51,7 +51,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             await client.connect();
             const collection = client.db('Unit').collection('path');
 
-            const projection = { _id: 0, x: 1 , y:1};
+            const projection = { _id: 0, x: 1 , y: 1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
@@ -92,7 +92,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             await client.connect();
             const collection = client.db('Unit').collection('obstacles');
 
-            const projection = { _id: 0, x: 1 , y:1};
+            const projection = { _id: 0, x: 1 , y: 1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
@@ -132,10 +132,16 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             await client.connect();
             const collection = client.db('Unit').collection('position');
 
-            const projection = { _id: 0, x: 1 , y:1};
+            const projection = { _id: 0, x: 1 , y:1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
+            // return results[0] as Position;
+            if (results[0]) {
+                return results[0] as Position;
+            } else {
+                return new Position(-1, -1);
+            }
             if (results[0]) {
                 return results[0] as Position;
             }
