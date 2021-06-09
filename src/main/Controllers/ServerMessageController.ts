@@ -40,7 +40,7 @@ export class ServerMessageController {
                 @inject("WebSocket") private ws: WebSocket) {
 
         this.ws.on('open', function open(): any {
-            console.log("Connection with serveer established! \n");
+            console.log("Connection with server established! \n");
         });
         
         this.ws.on('message', function incoming(data): any {
@@ -74,37 +74,30 @@ export class ServerMessageController {
             console.log(err);    
         });
        
-        this.running = true;
         this.pos = new Position(0, 0);
         this.speed = 2500;
         this.status = UnitStatus.STOP;
         this.error = 0;
         this.path_request = false;
+        this.running = false;
     };
 
-    
+    async checkWebSocketStateBeforeRunning() {
+        while(this.ws.readyState !== WebSocket.OPEN) {
+            console.log("Waiting to start for connection to open");
+            await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+        this.running = true;
+        this.sendUnitInfo();
+    }
+
     async modifyDataForPath(data: any): Promise<void> {
         this.modifyPath.receivedNewPath(data);
     }
 
-    async sendUnitInfoTest(): Promise<void> {
-            const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
-            const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
-            
-            console.log(curr_position);
-            console.log(curr_path_request);
-
-            var data = {
-              "position": { "x": curr_position.x, "y": curr_position.y }, 
-              "pathRequest": 1,
-              "obstacle": []  
-            }
-
-            this.ws.send(JSON.stringify(data));
-    }
-
     async sendUnitInfo(): Promise<void> {
         while(this.running === true) {
+            console.log("Inviando i dati");
             const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
             const curr_error = await this.checkUnitError.checkIfUnitError();
             const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
