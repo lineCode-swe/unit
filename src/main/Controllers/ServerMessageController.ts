@@ -75,7 +75,7 @@ export class ServerMessageController {
         });
        
         this.running = true;
-        this.pos = new Position(-1, -1);
+        this.pos = new Position(0, 0);
         this.speed = 2500;
         this.status = UnitStatus.STOP;
         this.error = 0;
@@ -110,12 +110,12 @@ export class ServerMessageController {
             const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
             const curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
             //const newObstacles = await this.checkObstacles.checkObstacles();
-             
+
             this.checkAndSendUnitPosition(curr_position);
             this.checkAndSendUnitError(curr_error);
             this.checkAndSendUnitPathRequest(curr_path_request);
             //this.checkAndSendUnitStatus(curr_status);
-            
+
             await new Promise(resolve => setTimeout(resolve, 1500));
         }
     }

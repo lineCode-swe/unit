@@ -11,8 +11,8 @@ async function setupDB(): Promise<void> {
     await positionToMongo(pos);
     await statusToMongo(UnitStatus.SHUTDOWN);
     await errorToMongo(0);
-    await speedToMongo(0);
-    await pathRequestToMongo(true);
+    await speedToMongo(2500);
+    await pathRequestToMongo(false);
 }
 
 async function pathToMongo(path: Position[]): Promise<void> {
