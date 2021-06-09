@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import WebSocket = require('ws');
 import { container } from "tsyringe";
 import { ModifyPositionService } from "./Domain/out/ModifyPositionService";
 import { ModifyPathRequestService } from "./Domain/out/ModifyPathRequestService";
@@ -49,6 +50,10 @@ container.register("UnitChangedSpeedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitChangedStatusOutbound", { useClass: UnitDataAdapter });
 container.register("UnitHasMovedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
+
+let ws: WebSocket = new WebSocket('ws://localhost:8080/unit/72e761bf-8a52-446e-a156-149d276a8d85');
+
+container.register("WebSocket", { useValue: ws });
 
 const clientServerController = container.resolve(ServerMessageController);
 wait();

@@ -77,27 +77,27 @@ export class UnitEngine {
         }
     }
 
-    setSpeed(new_speed: number): void {
+    stop(): void {
+        this.status = UnitStatus.SHUTDOWN;
+    }
+
+    private setSpeed(new_speed: number): void {
         this.ModifySpeed.modifySpeed(new_speed);
     }
 
-    setError(new_error: number): void {
+    private setError(new_error: number): void {
         this.ModifyError.modifyError(new_error);
     }
 
-    setPosition(new_position: Position): void {
+    private setPosition(new_position: Position): void {
         this.ModifyPosition.modifyPosition(new_position);
     }
 
-    setStatus(new_status: UnitStatus): void {
+    private setStatus(new_status: UnitStatus): void {
         this.ModifyStatus.modifyStatus(new_status);
     }
 
-    setPathRequest(new_path_request: boolean): void {
+    private setPathRequest(new_path_request: boolean): void {
         this.ModifyPathRequest.receivedNewPathRequest(new_path_request);
-    }
-
-    printHello(): void {
-        console.log("Hello, DI is working");
     }
 }

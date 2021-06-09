@@ -114,8 +114,13 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
             const collection = client.db('Unit').collection('position');
 
             await collection.deleteMany({});
-
-            await collection.insertOne(position);
+            var formatted_position = {
+                "position": {
+                    "x": position.x,
+                    "y": position.y
+                }
+            }
+            await collection.insertOne(formatted_position);
         }
         catch (e) {
             throw(e);
@@ -131,13 +136,12 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         try {
             await client.connect();
             const collection = client.db('Unit').collection('position');
-
-            const projection = { _id: 0, x: 1 , y:1 };
-            const cursor = collection.find().project(projection);
+            
+            const cursor = collection.find();
             const results = await cursor.toArray();
 
             if (results[0]) {
-                return results[0] as Position;
+                return results[0].position as Position;
             }
             else {
                 return new Position(-1, -1);

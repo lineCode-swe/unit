@@ -20,8 +20,8 @@ Se si, forse i vari "ws.on" vanno nel costruttore?
 @injectable()
 export class ServerMessageController {
 
-    private ws: WebSocket;
-    running: boolean;
+    //private ws: WebSocket;
+    private running: boolean;
     private pos: Position;
     private speed: number;
     private error: number;
@@ -34,9 +34,8 @@ export class ServerMessageController {
                 @inject("UnitChangedStatusUseCase") private unitChangedStatus: UnitChangedStatusUseCase,
                 @inject("CheckUnitChangedSpeedUseCase") private checkUnitChangedSpeed: CheckUnitChangedSpeedUseCase,
                 @inject("CheckObstaclesUseCase") private checkObstacles: CheckObstaclesUseCase,
-                @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase) {
-        
-        this.ws = new WebSocket('ws://localhost:8080/unit/1');
+                @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase,
+                @inject("WebSocket") private ws: WebSocket) {
 
         this.ws.on('open', function open(): any {
             console.log("Connection with server established! \n");
