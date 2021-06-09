@@ -4,7 +4,8 @@
   "description": "Unit component for PORTACS project",
   "main": "main.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/**/*.ts"
+    "test": "mocha -r ts-node/register src/test/**/*.ts",
+    "start": "npx ts-node src/main/main.ts"
   },
   "repository": {
     "type": "git",

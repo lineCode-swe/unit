@@ -10,6 +10,7 @@ import {UnitChangedStatusUseCase} from "../Domain/in/UnitChangedStatusUseCase";
 import {CheckUnitChangedSpeedUseCase} from "../Domain/in/CheckUnitChangedSpeedUseCase";
 import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
+import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 
 // + unit.getUUID a cosa serviva?
 /*
@@ -35,15 +36,32 @@ export class ServerMessageController {
                 @inject("CheckUnitChangedSpeedUseCase") private checkUnitChangedSpeed: CheckUnitChangedSpeedUseCase,
                 @inject("CheckObstaclesUseCase") private checkObstacles: CheckObstaclesUseCase,
                 @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase,
+                @inject("ModifyStatusUseCase") private modifyStatus: ModifyStatusUseCase,
                 @inject("WebSocket") private ws: WebSocket) {
 
         this.ws.on('open', function open(): any {
-            console.log("Connection with server established! \n");
+            console.log("Connection with serveer established! \n");
         });
         
         this.ws.on('message', function incoming(data): any {
-            var msg: Position[] = JSON.parse(data.toString());
-            modifyPath.receivedNewPath(msg);
+            var msg: any = JSON.parse(data.toString());
+            switch(msg.type) {
+                case "StartToUnit":
+                    console.log("Received a start message")
+                    //modifyPath.receivedNewPath(msg.path);
+                    break;
+                case "CommandToUnit":
+                    console.log("Receive a command message")
+                    //modifyStatus.modifyStatus(msg.command);
+                    break
+                case "KeepAliveToUnit":
+                    break
+                default:
+                    console.log("Received an unknown type of message");
+                    console.log(msg);
+            }
+            
+            
         });
         
         this.ws.on('close', function close(reason) {
@@ -105,7 +123,11 @@ export class ServerMessageController {
     async checkAndSendUnitPosition(pos: Position) {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
-            this.ws.send(JSON.stringify(this.pos));
+            var msg = {
+                "type": "PositionFromUnit",
+                "position": this.pos
+            }
+            this.ws.send(JSON.stringify(msg));
             console.log("sending pos...");
         }
     }
@@ -114,7 +136,11 @@ export class ServerMessageController {
     async checkAndSendUnitError(err: number) {
         if(err != this.error) {
             this.error = err;
-            this.ws.send(JSON.stringify(this.error));
+            var msg = {
+                "type": "ErrorFromUnit",
+                "error": this.error
+            }
+            this.ws.send(JSON.stringify(msg));
             console.log("sending err...");
         }
     }
@@ -122,7 +148,10 @@ export class ServerMessageController {
     async checkAndSendUnitPathRequest(pr: boolean) {
         if(pr != this.path_request) {
             this.path_request = pr;
-            this.ws.send(JSON.stringify(this.path_request));
+            var msg = {
+                "type": "PathRequestFromUnit"
+            }
+            this.ws.send(JSON.stringify(msg));
             console.log("sending pr...");
         }
     }
@@ -130,7 +159,11 @@ export class ServerMessageController {
     async checkAndSendUnitStatus(stat: UnitStatus) {
         if(stat != this.status) {
             this.status = stat;
-            this.ws.send(JSON.stringify(this.status));
+            var msg = {
+                "type": "StatusFromUnit",
+                "status": this.status
+            }
+            this.ws.send(JSON.stringify(msg));
             console.log("sending status...");
         }
     }

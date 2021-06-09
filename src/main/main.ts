@@ -59,7 +59,7 @@ const clientServerController = container.resolve(ServerMessageController);
 wait();
 const clientUnitEngine = container.resolve(UnitEngine);
 
-clientServerController.sendUnitInfoTest();
+clientServerController.sendUnitInfo();
 clientUnitEngine.begin();
 
 async function wait(): Promise<void> {
