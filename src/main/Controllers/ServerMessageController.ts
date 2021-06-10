@@ -74,7 +74,7 @@ export class ServerMessageController {
             console.log(err);    
         });
        
-        this.pos = new Position(0, 0);
+        this.pos = new Position(-1, -1);
         this.speed = 2500;
         this.status = UnitStatus.STOP;
         this.error = 0;
@@ -117,7 +117,7 @@ export class ServerMessageController {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
             var msg = {
-                "type": "PositionFromUnit",
+                "type": "PositionToServer",
                 "position": this.pos
             }
             this.ws.send(JSON.stringify(msg));
@@ -130,7 +130,7 @@ export class ServerMessageController {
         if(err != this.error) {
             this.error = err;
             var msg = {
-                "type": "ErrorFromUnit",
+                "type": "ErrorToServer",
                 "error": this.error
             }
             this.ws.send(JSON.stringify(msg));
@@ -142,7 +142,7 @@ export class ServerMessageController {
         if(pr != this.path_request) {
             this.path_request = pr;
             var msg = {
-                "type": "PathRequestFromUnit"
+                "type": "PathRequestToServer"
             }
             this.ws.send(JSON.stringify(msg));
             console.log("sending pr...");
@@ -153,7 +153,7 @@ export class ServerMessageController {
         if(stat != this.status) {
             this.status = stat;
             var msg = {
-                "type": "StatusFromUnit",
+                "type": "StatusToServer",
                 "status": this.status
             }
             this.ws.send(JSON.stringify(msg));
