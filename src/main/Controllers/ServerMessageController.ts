@@ -11,6 +11,8 @@ import {CheckUnitChangedSpeedUseCase} from "../Domain/in/CheckUnitChangedSpeedUs
 import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
+import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
+import { UnitEngine } from '../UnitEngine/UnitEngine';
 
 // + unit.getUUID a cosa serviva?
 /*
@@ -37,7 +39,9 @@ export class ServerMessageController {
                 @inject("CheckObstaclesUseCase") private checkObstacles: CheckObstaclesUseCase,
                 @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase,
                 @inject("ModifyStatusUseCase") private modifyStatus: ModifyStatusUseCase,
-                @inject("WebSocket") private ws: WebSocket) {
+                @inject("ModifyPathRequestUseCase") private modifyPathRequest: ModifyPathRequestUseCase,
+                @inject("WebSocket") private ws: WebSocket,
+                @inject("UnitEngine") private clientUnitEngine: UnitEngine) {
 
         this.ws.on('open', function open(): any {
             console.log("Connection with server established! \n");
@@ -47,12 +51,13 @@ export class ServerMessageController {
             var msg: any = JSON.parse(data.toString());
             switch(msg.type) {
                 case "StartToUnit":
-                    console.log("Received a start message")
-                    //modifyPath.receivedNewPath(msg.path);
+                    console.log("Received a start message");
+                    console.log(msg.path);
+                    modifyPath.receivedNewPath(msg.path);
                     break;
                 case "CommandToUnit":
                     console.log("Receive a command message")
-                    //modifyStatus.modifyStatus(msg.command);
+                    modifyStatus.modifyStatus(msg.command);
                     break
                 case "KeepAliveToUnit":
                     break
@@ -76,7 +81,7 @@ export class ServerMessageController {
        
         this.pos = new Position(-1, -1);
         this.speed = 2500;
-        this.status = UnitStatus.STOP;
+        this.status = UnitStatus.BASE;
         this.error = 0;
         this.path_request = false;
         this.running = false;
@@ -88,6 +93,7 @@ export class ServerMessageController {
             await new Promise(resolve => setTimeout(resolve, 3000));
         }
         this.running = true;
+        this.clientUnitEngine.begin();
         this.sendUnitInfo();
     }
 
@@ -97,7 +103,6 @@ export class ServerMessageController {
 
     async sendUnitInfo(): Promise<void> {
         while(this.running === true) {
-            console.log("Inviando i dati");
             const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
             const curr_error = await this.checkUnitError.checkIfUnitError();
             const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
@@ -107,7 +112,7 @@ export class ServerMessageController {
             this.checkAndSendUnitPosition(curr_position);
             this.checkAndSendUnitError(curr_error);
             this.checkAndSendUnitPathRequest(curr_path_request);
-            //this.checkAndSendUnitStatus(curr_status);
+            this.checkAndSendUnitStatus(curr_status);
 
             await new Promise(resolve => setTimeout(resolve, 1500));
         }
@@ -141,11 +146,14 @@ export class ServerMessageController {
     async checkAndSendUnitPathRequest(pr: boolean) {
         if(pr != this.path_request) {
             this.path_request = pr;
-            var msg = {
-                "type": "PathRequestToServer"
+            if(this.path_request == true) {
+                var msg = {
+                    "type": "PathRequestToServer"
+                }
+                this.ws.send(JSON.stringify(msg));
+                console.log("sending pr...");
             }
-            this.ws.send(JSON.stringify(msg));
-            console.log("sending pr...");
+            this.modifyPathRequest.receivedNewPathRequest(false);
         }
     }
 

@@ -5,11 +5,12 @@ const {MongoClient} = require('mongodb');
 
 async function setupDB(): Promise<void> {
     let array: Position[] = [ new Position(0, 0) ];
+    let new_array: Position[] = [ new Position(0, 0), new Position(1, 1) ];
     let pos: Position = new Position(0, 0);
     await pathToMongo(array);
     await obstaclesToMongo(array);
     await positionToMongo(pos);
-    await statusToMongo(UnitStatus.SHUTDOWN);
+    await statusToMongo(UnitStatus.BASE);
     await errorToMongo(0);
     await speedToMongo(2500);
     await pathRequestToMongo(false);

@@ -191,7 +191,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
                 return results[0].status;
             }
             else {
-                return UnitStatus.SHUTDOWN;
+                return UnitStatus.DISCONNECTED;
             }
         }
         catch (e) {

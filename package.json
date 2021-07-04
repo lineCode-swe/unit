@@ -5,7 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "test": "mocha -r ts-node/register src/test/**/*.ts",
-    "start": "npx ts-node src/main/main.ts",
+    "start": "npx ts-node src/main/PopulateDB.ts && npx ts-node src/main/main.ts",
     "db": "npx ts-node src/main/PopulateDB.ts"
   },
   "repository": {

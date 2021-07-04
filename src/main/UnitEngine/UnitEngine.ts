@@ -29,12 +29,12 @@ export class UnitEngine {
                 @inject("ModifySpeedUseCase") private ModifySpeed: ModifySpeedUseCase,
                 @inject("ModifyErrorUseCase") private ModifyError: ModifyErrorUseCase,
                 @inject("ModifyStatusUseCase") private ModifyStatus: ModifyStatusUseCase) {
-        this.path = [];
+        this.path = [ new Position(0, 0) ];
         this.curr_path_pos = 0;
         this.curr_path_length = this.path.length;
         this.curr_pos = new Position(0, 0);
         this.speed = 2500;
-        this.status = UnitStatus.STOP;
+        this.status = UnitStatus.BASE;
         this.error = 0;
         this.slowSpeed = this.speed*2;
         this.path_request = true;
@@ -42,43 +42,39 @@ export class UnitEngine {
 
     async begin(): Promise<void> {
         console.log("Unit is running");
-        while(this.status != UnitStatus.SHUTDOWN) {
-            if(this.status == UnitStatus.STOP) {
+        while(this.status != UnitStatus.DISCONNECTED) {
+            if(this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
                 var new_path = await this.LoadPath.loadPath();
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
-                    this.status = UnitStatus.START;
+                    this.status = UnitStatus.GOINGTO;
                     this.setStatus(this.status);
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
-            while(this.status == UnitStatus.START) {
+            while(this.status == UnitStatus.GOINGTO) {
                 if(this.curr_path_pos < this.curr_path_length) {
                     this.setPathRequest(false);
                     this.curr_pos = this.path[this.curr_path_pos];
-                    console.log(this.curr_pos);
+                    console.log("Moving to:" + this.curr_pos);
                     this.curr_path_pos += 1;
                     this.setPosition(this.curr_pos);
                     await new Promise(resolve => setTimeout(resolve, this.speed));
                 } else {
                     this.status = UnitStatus.STOP;
+                    this.path_request = true;
                     this.setStatus(this.status);
+                    this.setPathRequest(this.path_request);
+                    await new Promise(resolve => setTimeout(resolve, 3000));
                 }
             }
-            /*    
-            while(status == "GOBACK") {
-                this.curr_pos = this.path[this.curr_path_pos];
-                this.curr_path_pos -= 1;
-                await new Promise(resolve => setTimeout(resolve, this.speed));
-            }
-            */
         }
     }
 
     stop(): void {
-        this.status = UnitStatus.SHUTDOWN;
+        this.status = UnitStatus.DISCONNECTED;
     }
 
     private setSpeed(new_speed: number): void {

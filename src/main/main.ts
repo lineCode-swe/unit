@@ -55,13 +55,16 @@ let ws: WebSocket = new WebSocket('ws://localhost:8080/unit/72e761bf-8a52-446e-a
 
 container.register("WebSocket", { useValue: ws });
 
-const clientServerController = container.resolve(ServerMessageController);
 const clientUnitEngine = container.resolve(UnitEngine);
+
+container.register("UnitEngine", { useValue: clientUnitEngine });
+
+const clientServerController = container.resolve(ServerMessageController);
 
 wait();
 
 clientServerController.checkWebSocketStateBeforeRunning();
-clientUnitEngine.begin();
+
 
 async function wait(): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 5000));
