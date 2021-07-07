@@ -65,7 +65,6 @@ wait();
 
 clientServerController.checkWebSocketStateBeforeRunning();
 
-
 async function wait(): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 5000));
 }

@@ -4,7 +4,7 @@
   "description": "Unit component for PORTACS project",
   "main": "main.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/**/*.ts",
+    "test": "mocha -r ts-node/register src/test/**/*.spec.ts",
     "start": "npx ts-node src/main/PopulateDB.ts && npx ts-node src/main/main.ts",
     "db": "npx ts-node src/main/PopulateDB.ts"
   },
