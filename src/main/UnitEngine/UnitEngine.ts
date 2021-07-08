@@ -32,7 +32,9 @@ export class UnitEngine {
         this.path = [ new Position(0, 0) ];
         this.curr_path_pos = 0;
         this.curr_path_length = this.path.length;
-        this.curr_pos = new Position(0, 0);
+        let ubx: any = process.env.UNIT_BASE_X;
+        let uby: any = process.env.UNIT_BASE_Y;
+        this.curr_pos = new Position(ubx, uby);
         this.speed = 2500;
         this.status = UnitStatus.BASE;
         this.error = 0;

@@ -51,7 +51,11 @@ container.register("UnitChangedStatusOutbound", { useClass: UnitDataAdapter });
 container.register("UnitHasMovedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 
-let ws: WebSocket = new WebSocket('ws://localhost:8080/unit/72e761bf-8a52-446e-a156-149d276a8d85');
+let id: any = process.env.UNIT_ID;
+
+let url: any = 'ws://localhost:8080/unit/' + id;
+
+let ws: WebSocket = new WebSocket(url);
 
 container.register("WebSocket", { useValue: ws });
 

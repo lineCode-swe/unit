@@ -3,10 +3,13 @@ import {UnitStatus} from "./UnitStatus";
 
 const {MongoClient} = require('mongodb');
 
-async function setupDB(): Promise<void> {
+let unit_base_x: any = process.env.UNIT_BASE_X;
+let unit_base_y: any = process.env.UNIT_BASE_Y;
+
+async function setupDB(ubx: any, uby: any): Promise<void> {
     let array: Position[] = [ new Position(0, 0) ];
-    let new_array: Position[] = [ new Position(0, 0), new Position(1, 1) ];
-    let pos: Position = new Position(0, 0);
+    // let new_array: Position[] = [ new Position(0, 0), new Position(1, 1) ];
+    let pos: Position = new Position(ubx, uby);
     await pathToMongo(array);
     await obstaclesToMongo(array);
     await positionToMongo(pos);
@@ -160,4 +163,4 @@ async function pathRequestToMongo(pathRequest: boolean): Promise<void> {
     }
 }
 
-setupDB();
+setupDB(unit_base_x, unit_base_y);
