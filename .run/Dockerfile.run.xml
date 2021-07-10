@@ -4,7 +4,7 @@
       <settings>
         <option name="imageTag" value="portacs-unit" />
         <option name="containerName" value="unit" />
-        <option name="commandLineOptions" value="--network host" />
+        <option name="commandLineOptions" value="--network host -e UNIT_ID=&quot;72e761bf-8a52-446e-a156-149d276a8d85&quot; -e UNIT_BASE_X=&quot;0&quot; -e  UNIT_BASE_Y=&quot;0&quot;" />
         <option name="sourceFilePath" value="Dockerfile" />
       </settings>
     </deployment>
