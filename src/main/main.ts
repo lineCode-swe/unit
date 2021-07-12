@@ -53,7 +53,7 @@ container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 
 let id: any = process.env.UNIT_ID;
 
-let url: any = 'ws://localhost:8080/unit/' + id;
+let url: any = 'ws://server:8080/unit/' + id;
 
 let ws: WebSocket = new WebSocket(url);
 
