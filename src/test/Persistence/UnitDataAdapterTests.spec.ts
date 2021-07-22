@@ -46,7 +46,7 @@ describe('Tests for UnitDataAdapter', () => {
     })
 
     it('Testing loadStatus', () => {
-        expect(curr_status).to.equal(UnitStatus.SHUTDOWN);
+        expect(curr_status).to.equal(UnitStatus.BASE);
     })
 
     it('Testing loadError', () => {

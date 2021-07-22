@@ -1,12 +1,12 @@
-import { Position } from "../Position";
-import { ModifyPathRequestUseCase  } from "../Domain/in/ModifyPathRequestUseCase";
-import { LoadPathUseCase } from "../Domain/in/LoadPathUseCase";
-import { ModifyPositionUseCase } from "../Domain/in/ModifyPositionUseCase";
-import { ModifySpeedUseCase } from "../Domain/in/ModifySpeedUseCase";
-import { ModifyErrorUseCase } from "../Domain/in/ModifyErrorUseCase";
-import { ModifyStatusUseCase } from "../Domain/in/ModifyStatusUseCase";
-import { inject, injectable } from "tsyringe";
-import { UnitStatus } from "../UnitStatus";
+import {Position} from "../Position";
+import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
+import {LoadPathUseCase} from "../Domain/in/LoadPathUseCase";
+import {ModifyPositionUseCase} from "../Domain/in/ModifyPositionUseCase";
+import {ModifySpeedUseCase} from "../Domain/in/ModifySpeedUseCase";
+import {ModifyErrorUseCase} from "../Domain/in/ModifyErrorUseCase";
+import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
+import {inject, injectable} from "tsyringe";
+import {UnitStatus} from "../UnitStatus";
 
 @injectable()
 export class UnitEngine {
@@ -19,7 +19,7 @@ export class UnitEngine {
     private error: number;
     private path_request: boolean;
     private status: UnitStatus;
-
+    private readonly base: any;
 
     private slowSpeed: number;
 
@@ -40,6 +40,14 @@ export class UnitEngine {
         this.error = 0;
         this.slowSpeed = this.speed*2;
         this.path_request = true;
+        this.base = {
+            "x": Number(process.env.UNIT_BASE_X),
+            "y": Number(process.env.UNIT_BASE_Y)
+        }
+        /*this.unit_base_x = process.env.UNIT_BASE_X;
+        this.unit_base_y = process.env.UNIT_BASE_Y;
+        console.log(this.unit_base_x);
+        console.log(this.unit_base_y);*/
     };
 
     async begin(): Promise<void> {
@@ -52,24 +60,31 @@ export class UnitEngine {
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
                     this.status = UnitStatus.GOINGTO;
+                    console.log(this.status);
                     this.setStatus(this.status);
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
             while(this.status == UnitStatus.GOINGTO) {
                 if(this.curr_path_pos < this.curr_path_length) {
-                    this.setPathRequest(false);
+                    this.path_request = false;
+                    this.setPathRequest(this.path_request);
                     this.curr_pos = this.path[this.curr_path_pos];
-                    console.log("Moving to:" + this.curr_pos);
+                    console.log("Moving to: " + this.curr_pos.x + ", " + this.curr_pos.y);
                     this.curr_path_pos += 1;
                     this.setPosition(this.curr_pos);
                     await new Promise(resolve => setTimeout(resolve, this.speed));
                 } else {
-                    this.status = UnitStatus.STOP;
-                    this.path_request = true;
-                    this.setStatus(this.status);
-                    this.setPathRequest(this.path_request);
-                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    if(JSON.stringify(this.curr_pos) == JSON.stringify(this.base)) {
+                        this.status = UnitStatus.BASE;
+                        this.setStatus(this.status);
+                    } else {
+                        this.status = UnitStatus.STOP;
+                        this.path_request = true;
+                        this.setStatus(this.status);
+                        this.setPathRequest(this.path_request);
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                    }
                 }
             }
         }

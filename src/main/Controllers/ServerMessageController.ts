@@ -14,12 +14,6 @@ import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
 import { UnitEngine } from '../UnitEngine/UnitEngine';
 
-// + unit.getUUID a cosa serviva?
-/*
-Il websocket deve essere un campo del ServerMessageController?
-Se si, forse i vari "ws.on" vanno nel costruttore?
-*/
-
 @injectable()
 export class ServerMessageController {
 
@@ -102,11 +96,12 @@ export class ServerMessageController {
     }
 
     async sendUnitInfo(): Promise<void> {
-        while(this.running === true) {
+        while(this.running) {
             const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
             const curr_error = await this.checkUnitError.checkIfUnitError();
             const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
             const curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
+            console.log(curr_status);
             //const newObstacles = await this.checkObstacles.checkObstacles();
 
             this.checkAndSendUnitPosition(curr_position);
@@ -121,7 +116,7 @@ export class ServerMessageController {
     async checkAndSendUnitPosition(pos: Position) {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
-            var msg = {
+            let msg = {
                 "type": "PositionToServer",
                 "position": this.pos
             }
@@ -134,7 +129,7 @@ export class ServerMessageController {
     async checkAndSendUnitError(err: number) {
         if(err != this.error) {
             this.error = err;
-            var msg = {
+            let msg = {
                 "type": "ErrorToServer",
                 "error": this.error
             }
@@ -147,7 +142,7 @@ export class ServerMessageController {
         if(pr != this.path_request) {
             this.path_request = pr;
             if(this.path_request == true) {
-                var msg = {
+                let msg = {
                     "type": "PathRequestToServer"
                 }
                 this.ws.send(JSON.stringify(msg));
@@ -160,7 +155,7 @@ export class ServerMessageController {
     async checkAndSendUnitStatus(stat: UnitStatus) {
         if(stat != this.status) {
             this.status = stat;
-            var msg = {
+            let msg = {
                 "type": "StatusToServer",
                 "status": this.status
             }
@@ -168,13 +163,4 @@ export class ServerMessageController {
             console.log("sending status...");
         }
     }
-    
-    /*
-    async checkUnitSpeed() {
-        let speed: number = await this.checkUnitChangedSpeed.checkIfUnitChangedSpeed();
-        
-        TO DO
-        
-    }
-    */
 }
