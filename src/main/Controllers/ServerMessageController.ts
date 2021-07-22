@@ -12,7 +12,7 @@ import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
-import { UnitEngine } from '../UnitEngine/UnitEngine';
+import {UnitEngine} from '../UnitEngine/UnitEngine';
 
 @injectable()
 export class ServerMessageController {
@@ -50,8 +50,12 @@ export class ServerMessageController {
                     modifyPath.receivedNewPath(msg.path);
                     break;
                 case "CommandToUnit":
-                    console.log("Receive a command message")
-                    modifyStatus.modifyStatus(msg.command);
+                    console.log("Receive a command message");
+                    if(msg.command == "SHUTDOWN") {
+                        modifyStatus.modifyStatus(UnitStatus.DISCONNECTED);
+                    } else {
+                        modifyStatus.modifyStatus(msg.command);
+                    }
                     break
                 case "KeepAliveToUnit":
                     break
@@ -155,12 +159,22 @@ export class ServerMessageController {
     async checkAndSendUnitStatus(stat: UnitStatus) {
         if(stat != this.status) {
             this.status = stat;
-            let msg = {
-                "type": "StatusToServer",
-                "status": this.status
+            if(this.status == UnitStatus.DISCONNECTED) {
+                let msg = {
+                    "type": "StatusToServer",
+                    "status": this.status
+                }
+                this.ws.send(JSON.stringify(msg));
+                console.log("sending status...");
+                process.exit();
+            } else {
+                let msg = {
+                    "type": "StatusToServer",
+                    "status": this.status
+                }
+                this.ws.send(JSON.stringify(msg));
+                console.log("sending status...");
             }
-            this.ws.send(JSON.stringify(msg));
-            console.log("sending status...");
         }
     }
 }
