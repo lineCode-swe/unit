@@ -12,6 +12,7 @@ import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
+import {LoadDetectedObstaclesUseCase} from "../Domain/in/LoadDetectedObstaclesUseCase";
 import {UnitEngine} from '../UnitEngine/UnitEngine';
 
 @injectable()
@@ -34,7 +35,8 @@ export class ServerMessageController {
                 @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase,
                 @inject("ModifyStatusUseCase") private modifyStatus: ModifyStatusUseCase,
                 @inject("ModifyPathRequestUseCase") private modifyPathRequest: ModifyPathRequestUseCase,
-                @inject("WebSocket") private ws: WebSocket,
+                @inject("LoadDetectedObstaclesUseCase") private loadDetectedObstacles: LoadDetectedObstaclesUseCase,
+                @inject("WebSocketServer") private ws: WebSocket,
                 @inject("UnitEngine") private clientUnitEngine: UnitEngine) {
 
         this.ws.on('open', function open(): any {
@@ -42,7 +44,7 @@ export class ServerMessageController {
         });
         
         this.ws.on('message', function incoming(data): any {
-            var msg: any = JSON.parse(data.toString());
+            let msg: any = JSON.parse(data.toString());
             switch(msg.type) {
                 case "StartToUnit":
                     console.log("Received a start message");
@@ -73,7 +75,7 @@ export class ServerMessageController {
         });
         
         this.ws.on('error', function error(err) {
-            console.log("An internal error has occurred");
+            console.log("An internal error in server websocket has occurred");
             console.log(err);    
         });
        
@@ -101,14 +103,16 @@ export class ServerMessageController {
 
     async sendUnitInfo(): Promise<void> {
         while(this.running) {
-            const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
-            const curr_error = await this.checkUnitError.checkIfUnitError();
-            const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
-            const curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
+            let curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
+            let curr_error = await this.checkUnitError.checkIfUnitError();
+            let curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
+            let curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
+            let curr_obs = await this.loadDetectedObstacles.loadDetectedObstacles();
+
             console.log(curr_status);
             //const newObstacles = await this.checkObstacles.checkObstacles();
 
-            this.checkAndSendUnitPosition(curr_position);
+            this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs);
             this.checkAndSendUnitError(curr_error);
             this.checkAndSendUnitPathRequest(curr_path_request);
             this.checkAndSendUnitStatus(curr_status);
@@ -117,15 +121,16 @@ export class ServerMessageController {
         }
     }
 
-    async checkAndSendUnitPosition(pos: Position) {
+    async checkAndSendUnitPositionAndObstacles(pos: Position, obs: Position[]) {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
             let msg = {
                 "type": "PositionToServer",
-                "position": this.pos
+                "position": this.pos,
+                "obstacles": obs
             }
             this.ws.send(JSON.stringify(msg));
-            console.log("sending pos...");
+            console.log("sending pos and obstacles...");
         }
     }
 
@@ -145,7 +150,7 @@ export class ServerMessageController {
     async checkAndSendUnitPathRequest(pr: boolean) {
         if(pr != this.path_request) {
             this.path_request = pr;
-            if(this.path_request == true) {
+            if(this.path_request) {
                 let msg = {
                     "type": "PathRequestToServer"
                 }
