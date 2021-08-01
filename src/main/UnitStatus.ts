@@ -1,6 +1,7 @@
 export enum UnitStatus {
-    START = 'START',
+    GOINGTO = 'GOINGTO',
     STOP = 'STOP',
-    GOBACK = 'GOBACK',
-    SHUTDOWN = 'SHUTDOWN'
+    BASE = 'BASE',
+    ERROR = 'ERROR',
+    DISCONNECTED = 'DISCONNECTED'
 }

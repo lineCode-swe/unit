@@ -4,7 +4,9 @@
   "description": "Unit component for PORTACS project",
   "main": "main.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/**/*.ts"
+    "test": "mocha -r ts-node/register src/test/**/*.spec.ts",
+    "start": "npx ts-node src/main/PopulateDB.ts && npx ts-node src/main/main.ts",
+    "db": "npx ts-node src/main/PopulateDB.ts"
   },
   "repository": {
     "type": "git",
@@ -18,11 +20,13 @@
   "homepage": "https://github.com/lineCode-swe/unit#readme",
   "dependencies": {
     "@types/node": "^15.3.0",
-    "mongodb": "^3.6.6",
+    "@types/ws": "^7.4.4",
+    "mongodb": "^3.6.8",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^9.1.1",
     "tsyringe": "^4.5.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",

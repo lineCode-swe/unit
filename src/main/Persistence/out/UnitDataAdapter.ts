@@ -26,8 +26,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     constructor() {};
 
     async pathToMongo(path: Position[]): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('path');
@@ -45,13 +45,13 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadPath(): Promise<Position[]> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('path');
 
-            const projection = { _id: 0, x: 1 , y:1};
+            const projection = { _id: 0, x: 1 , y: 1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
@@ -66,8 +66,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async obstaclesToMongo(obstacles: Position[]): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('obstacles');
@@ -86,13 +86,13 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadObstacles(): Promise<Position[]> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('obstacles');
 
-            const projection = { _id: 0, x: 1 , y:1};
+            const projection = { _id: 0, x: 1 , y: 1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
@@ -107,17 +107,20 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async positionToMongo(position: Position): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('position');
 
-            const query = { position: Position };
-            const update = { $set: { 'position': position }};
-            const options = { upsert: true };
-
-            await collection.updateOne(query, update, options);
+            await collection.deleteMany({});
+            var formatted_position = {
+                "position": {
+                    "x": position.x,
+                    "y": position.y
+                }
+            }
+            await collection.insertOne(formatted_position);
         }
         catch (e) {
             throw(e);
@@ -128,17 +131,21 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadPosition(): Promise<Position> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('position');
-
-            const projection = { _id: 0, x: 1 , y:1};
-            const cursor = collection.find().project(projection);
+            
+            const cursor = collection.find();
             const results = await cursor.toArray();
 
-            return results[0] as Position;
+            if (results[0]) {
+                return results[0].position as Position;
+            }
+            else {
+                return new Position(-1, -1);
+            }
         }
         catch (e) {
             throw(e);
@@ -149,8 +156,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async statusToMongo(status: UnitStatus): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('status');
@@ -170,13 +177,13 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadStatus(): Promise<UnitStatus> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('status');
 
-            const projection = { _id: 0, status:1};
+            const projection = { _id: 0, status:1 };
             const cursor = collection.find().project(projection);
             const results = await cursor.toArray();
 
@@ -184,7 +191,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
                 return results[0].status;
             }
             else {
-                return UnitStatus.SHUTDOWN;
+                return UnitStatus.DISCONNECTED;
             }
         }
         catch (e) {
@@ -196,8 +203,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async errorToMongo(error: number): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('error');
@@ -217,8 +224,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadError(): Promise<number> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('error');
@@ -243,8 +250,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async speedToMongo(speed: number): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('speed');
@@ -264,8 +271,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadSpeed(): Promise<number> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('speed');
@@ -290,8 +297,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async pathRequestToMongo(pathRequest: boolean): Promise<void> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('pathRequest');
@@ -311,8 +318,8 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
     }
 
     async loadPathRequest(): Promise<boolean> {
-        let url = "mongodb://localhost:27017/mydb";
-        var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
         try {
             await client.connect();
             const collection = client.db('Unit').collection('pathRequest');
