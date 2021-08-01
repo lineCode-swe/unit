@@ -108,8 +108,6 @@ export class ServerMessageController {
             let curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
             let curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
             let curr_obs = await this.loadDetectedObstacles.loadDetectedObstacles();
-
-            console.log(curr_status);
             //const newObstacles = await this.checkObstacles.checkObstacles();
 
             this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs);

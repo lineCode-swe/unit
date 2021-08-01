@@ -13,7 +13,7 @@ async function setupDB(ubx: any, uby: any): Promise<void> {
     let pos: Position = new Position(ubx, uby);
     let empty_array: Position[] = [];
     await pathToMongo(array);
-    await obstaclesToMongo(array);
+    await obstaclesToMongo(empty_array);
     await positionToMongo(pos);
     await statusToMongo(UnitStatus.BASE);
     await errorToMongo(0);
@@ -67,15 +67,19 @@ async function pathToMongo(path: Position[]): Promise<void> {
 
 async function obstaclesToMongo(obstacles: Position[]): Promise<void> {
     let url = "mongodb://localhost:27017/mydb";
-    var client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
     try {
         await client.connect();
         const collection = client.db('Unit').collection('obstacles');
 
         await collection.deleteMany({});
-
         const options = { ordered: true };
-        await collection.insertMany(obstacles, options);
+        if(JSON.stringify(obstacles) == JSON.stringify([])) {
+            let new_obstacles: Position[] = [new Position(-1, -1)];
+            await collection.insertMany(new_obstacles, options);
+        } else {
+            await collection.insertMany(obstacles, options);
+        }
     }
     catch (e) {
         throw(e);

@@ -63,7 +63,7 @@ container.register("ModifyDetectedObstaclesOutbound", { useClass: UnitDataAdapte
 let id: any = process.env.UNIT_ID;
 
 let urlServer: any = 'ws://server:8080/unit/' + id;
-let urlSensors: any = 'ws://localohost:8080';
+let urlSensors: any = 'ws://sensors:8082';
 
 let wsServer: WebSocket = new WebSocket(urlServer);
 let wsSensors: WebSocket = new WebSocket(urlSensors);
@@ -75,8 +75,9 @@ const clientUnitEngine = container.resolve(UnitEngine);
 
 container.register("UnitEngine", { useValue: clientUnitEngine });
 
-const clientServerController = container.resolve(ServerMessageController);
 const clientSensorsController = container.resolve(SensorMessageController);
+const clientServerController = container.resolve(ServerMessageController);
+
 
 wait();
 

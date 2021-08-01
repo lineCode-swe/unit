@@ -61,6 +61,7 @@ export class UnitEngine {
         while(this.status != UnitStatus.DISCONNECTED) {
             if(this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
                 var new_path = await this.LoadPath.loadPath();
+                console.log("Checking for new path");
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
@@ -72,9 +73,13 @@ export class UnitEngine {
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
             while(this.status == UnitStatus.GOINGTO) {
+                //console.log("Unit is starting");
                 this.obs = await this.CheckObstacles.checkObstacles();
+                //console.log("Data had been retrieved");
                 let det_obs = this.checkForInboundObs(this.obs); // Controllo se ci sono ostacoli intorno all' unita
+                //console.log("Obstacles found: " + this.obs);
                 let block = this.checkForBlockingObs(det_obs); // Controllo se ci sono ostacoli che bloccano i movimenti dell' unita
+                //console.log("Blocking obstacles found: " + this.obs);
 
                 if(JSON.stringify(det_obs) != JSON.stringify([])){
                     this.ModifyDetectedObstacles.detectedObstacles(det_obs);
@@ -82,6 +87,7 @@ export class UnitEngine {
 
                 if(this.curr_path_pos < this.curr_path_length) {
                     if(!block) {
+                        //console.log("No blocking obstacles, advancing");
                         this.path_request = false;
                         this.setPathRequest(this.path_request);
                         this.curr_pos = this.path[this.curr_path_pos];
@@ -90,6 +96,7 @@ export class UnitEngine {
                         this.setPosition(this.curr_pos);
                         await new Promise(resolve => setTimeout(resolve, this.speed));
                     } else {
+                        //console.log("There is a blocking obstacle, stop");
                         this.status = UnitStatus.STOP;
                         this.setStatus(this.status);
                     }
@@ -111,7 +118,7 @@ export class UnitEngine {
 
     checkForInboundObs(obs: Position[]): Position[] {
         let det_obs: Position[] = [];
-        for(let i=(this.curr_pos.x-1); i<i+3; i++) {
+        /*for(let i=(this.curr_pos.x-1); i<i+3; i++) {
             for(let j=(this.curr_pos.y-1); j<j+3; j++) {
                 this.obs.forEach(value => {
                     if (value.x == i  && value.y == j) {
@@ -119,7 +126,15 @@ export class UnitEngine {
                     }
                 });
             }
-        }
+        }*/
+        obs.forEach( value => {
+            console.log(value.x + " " + value.y);
+            console.log((this.curr_pos.x) + " " + (this.curr_pos.x-1) + " " + (this.curr_pos.x+1) + " ");
+            if(value.x == this.curr_pos.x || value.x == this.curr_pos.x-1 || value.x == this.curr_pos.y
+                && value.y == this.curr_pos.y+1 || value.y == this.curr_pos.y || value.y == this.curr_pos.y-1) {
+                det_obs.push(value);
+            }
+        })
         return det_obs;
     }
 
