@@ -13,6 +13,7 @@ import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
 import {LoadDetectedObstaclesUseCase} from "../Domain/in/LoadDetectedObstaclesUseCase";
+import {ModifyErrorUseCase} from "../Domain/in/ModifyErrorUseCase";
 import {UnitEngine} from '../UnitEngine/UnitEngine';
 
 @injectable()
@@ -36,6 +37,7 @@ export class ServerMessageController {
                 @inject("ModifyStatusUseCase") private modifyStatus: ModifyStatusUseCase,
                 @inject("ModifyPathRequestUseCase") private modifyPathRequest: ModifyPathRequestUseCase,
                 @inject("LoadDetectedObstaclesUseCase") private loadDetectedObstacles: LoadDetectedObstaclesUseCase,
+                @inject("ModifyErrorUseCase") private modifyError: ModifyErrorUseCase,
                 @inject("WebSocketServer") private ws: WebSocket,
                 @inject("UnitEngine") private clientUnitEngine: UnitEngine) {
 
@@ -108,9 +110,8 @@ export class ServerMessageController {
             let curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
             let curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
             let curr_obs = await this.loadDetectedObstacles.loadDetectedObstacles();
-            //const newObstacles = await this.checkObstacles.checkObstacles();
 
-            this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs);
+            this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs, curr_error);
             this.checkAndSendUnitError(curr_error);
             this.checkAndSendUnitPathRequest(curr_path_request);
             this.checkAndSendUnitStatus(curr_status);
@@ -119,7 +120,7 @@ export class ServerMessageController {
         }
     }
 
-    async checkAndSendUnitPositionAndObstacles(pos: Position, obs: Position[]) {
+    async checkAndSendUnitPositionAndObstacles(pos: Position, obs: Position[], err: number) {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
             let msg = {
@@ -127,8 +128,20 @@ export class ServerMessageController {
                 "position": this.pos,
                 "obstacles": obs
             }
+            console.log(msg);
             this.ws.send(JSON.stringify(msg));
-            console.log("sending pos and obstacles...");
+            console.log("sending pos and obstacles: position changes");
+        } else if(err == 10) {
+            this.modifyError.modifyError(1);
+            this.pos = pos;
+            let msg = {
+                "type": "PositionToServer",
+                "position": this.pos,
+                "obstacles": obs
+            }
+            console.log(msg);
+            this.ws.send(JSON.stringify(msg));
+            console.log("sending pos and obstacles: found obstacles");
         }
     }
 

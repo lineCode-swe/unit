@@ -7,8 +7,10 @@ import {ModifyErrorUseCase} from "../Domain/in/ModifyErrorUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {ModifyDetectedObstaclesUseCase} from "../Domain/in/ModifyDetectedObstaclesUseCase";
+import {UnitChangedStatusUseCase} from "../Domain/in/UnitChangedStatusUseCase";
 import {inject, injectable} from "tsyringe";
 import {UnitStatus} from "../UnitStatus";
+import {UnitChangedStatusService} from "../Domain/out/UnitChangedStatusService";
 
 @injectable()
 export class UnitEngine {
@@ -33,7 +35,8 @@ export class UnitEngine {
                 @inject("ModifyErrorUseCase") private ModifyError: ModifyErrorUseCase,
                 @inject("ModifyStatusUseCase") private ModifyStatus: ModifyStatusUseCase,
                 @inject("CheckObstaclesUseCase") private CheckObstacles: CheckObstaclesUseCase,
-                @inject("ModifyDetectedObstaclesUseCase") private ModifyDetectedObstacles: ModifyDetectedObstaclesUseCase) {
+                @inject("ModifyDetectedObstaclesUseCase") private ModifyDetectedObstacles: ModifyDetectedObstaclesUseCase,
+                @inject("UnitChangedStatusUseCase") private UnitChangedStatus: UnitChangedStatusUseCase) {
         this.path = [ new Position(0, 0) ];
         this.curr_path_pos = 0;
         this.curr_path_length = this.path.length;
@@ -60,30 +63,30 @@ export class UnitEngine {
         console.log("Unit is running");
         while(this.status != UnitStatus.DISCONNECTED) {
             if(this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
-                var new_path = await this.LoadPath.loadPath();
+                let new_path = await this.LoadPath.loadPath();
                 console.log("Checking for new path");
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
+                    this.error = 0;
                     this.status = UnitStatus.GOINGTO;
                     console.log(this.status);
                     this.setStatus(this.status);
+                    this.setError(0);
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } 
             while(this.status == UnitStatus.GOINGTO) {
                 //console.log("Unit is starting");
                 this.obs = await this.CheckObstacles.checkObstacles();
-                //console.log("Data had been retrieved");
                 let det_obs = this.checkForInboundObs(this.obs); // Controllo se ci sono ostacoli intorno all' unita
-                //console.log("Obstacles found: " + this.obs);
+                console.log("Obstacles found: " + JSON.stringify(det_obs));
                 let block = this.checkForBlockingObs(det_obs); // Controllo se ci sono ostacoli che bloccano i movimenti dell' unita
-                //console.log("Blocking obstacles found: " + this.obs);
+                console.log("Blocking obstacles found: " + block);
 
-                if(JSON.stringify(det_obs) != JSON.stringify([])){
-                    this.ModifyDetectedObstacles.detectedObstacles(det_obs);
-                }
+                this.ModifyDetectedObstacles.detectedObstacles(det_obs);
+
 
                 if(this.curr_path_pos < this.curr_path_length) {
                     if(!block) {
@@ -95,10 +98,14 @@ export class UnitEngine {
                         this.curr_path_pos += 1;
                         this.setPosition(this.curr_pos);
                         await new Promise(resolve => setTimeout(resolve, this.speed));
+                        await this.updateStatus();
                     } else {
                         //console.log("There is a blocking obstacle, stop");
+                        this.error = 10;
                         this.status = UnitStatus.STOP;
                         this.setStatus(this.status);
+                        this.setError(10);
+                        await new Promise(resolve => setTimeout(resolve, this.speed));
                     }
                 } else {
                     if(JSON.stringify(this.curr_pos) == JSON.stringify(this.base)) {
@@ -118,21 +125,11 @@ export class UnitEngine {
 
     checkForInboundObs(obs: Position[]): Position[] {
         let det_obs: Position[] = [];
-        /*for(let i=(this.curr_pos.x-1); i<i+3; i++) {
-            for(let j=(this.curr_pos.y-1); j<j+3; j++) {
-                this.obs.forEach(value => {
-                    if (value.x == i  && value.y == j) {
-                        det_obs.push(value);
-                    }
-                });
-            }
-        }*/
         obs.forEach( value => {
-            console.log(value.x + " " + value.y);
-            console.log((this.curr_pos.x) + " " + (this.curr_pos.x-1) + " " + (this.curr_pos.x+1) + " ");
-            if(value.x == this.curr_pos.x || value.x == this.curr_pos.x-1 || value.x == this.curr_pos.y
-                && value.y == this.curr_pos.y+1 || value.y == this.curr_pos.y || value.y == this.curr_pos.y-1) {
+            if((value.x == (this.curr_pos.x) || value.x == (this.curr_pos.x-1) || value.x == (this.curr_pos.x+1))
+                && (value.y == (this.curr_pos.y) || value.y == (this.curr_pos.y-1) || value.y == (this.curr_pos.y+1))) {
                 det_obs.push(value);
+                console.log("Update di ostacoli:" + JSON.stringify(det_obs));
             }
         })
         return det_obs;
@@ -141,6 +138,9 @@ export class UnitEngine {
     private checkForBlockingObs(det_obs: Position[]): boolean {
         let blocked: boolean = false;
         det_obs.forEach(value => {
+            console.log(JSON.stringify(value));
+            console.log(JSON.stringify(this.path[this.curr_path_pos]));
+            console.log(JSON.stringify(value) == JSON.stringify(this.path[this.curr_path_pos]));
             if(JSON.stringify(value) == JSON.stringify(this.path[this.curr_path_pos])) {
                 blocked = true;
             }
@@ -170,5 +170,12 @@ export class UnitEngine {
 
     private setPathRequest(new_path_request: boolean): void {
         this.ModifyPathRequest.receivedNewPathRequest(new_path_request);
+    }
+
+    private async updateStatus(): Promise<void> {
+        let aux_status = await this.UnitChangedStatus.checkIfUnitChangedStatus();
+        if(aux_status != this.status) {
+            this.status = aux_status;
+        }
     }
 }

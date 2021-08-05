@@ -17,9 +17,11 @@ export class SensorMessageController {
 
         this.ws.on('message', function incoming(data): any {
             let msg: any = JSON.parse(data.toString());
-            // DEBUG -> TO BE REMOVED
-            console.log(msg);
-            inputSensor.receivedObstacle(msg);
+            let obs_array: Position[] = [];
+            msg.forEach(function(value: any) {
+                obs_array.push(new Position(Number(value.x), Number(value.y)));
+            });
+            inputSensor.receivedObstacle(obs_array);
         });
 
         this.ws.on('close', function close(reason) {
