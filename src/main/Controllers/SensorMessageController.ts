@@ -21,6 +21,7 @@ export class SensorMessageController {
             msg.forEach(function(value: any) {
                 obs_array.push(new Position(Number(value.x), Number(value.y)));
             });
+            console.log("Ricevuto messaggio: " + msg);
             inputSensor.receivedObstacle(obs_array);
         });
 
