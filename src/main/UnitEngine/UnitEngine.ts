@@ -62,7 +62,8 @@ export class UnitEngine {
     async begin(): Promise<void> {
         console.log("Unit is running");
         while(this.status != UnitStatus.DISCONNECTED) {
-            if(this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
+            this.status = await this.UnitChangedStatus.checkIfUnitChangedStatus();
+            if (this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
                 let new_path = await this.LoadPath.loadPath();
                 console.log("Checking for new path");
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
@@ -76,8 +77,7 @@ export class UnitEngine {
                     this.setError(0);
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
-            } 
-            while(this.status == UnitStatus.GOINGTO) {
+            } else if (this.status == UnitStatus.GOINGTO) {
                 //console.log("Unit is starting");
                 this.obs = await this.CheckObstacles.checkObstacles();
                 let det_obs = this.checkForInboundObs(this.obs); // Controllo se ci sono ostacoli intorno all' unita
@@ -119,6 +119,10 @@ export class UnitEngine {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                     }
                 }
+            } else if (this.status == UnitStatus.ERROR) {
+                this.path_request = true;
+                this.setPathRequest(this.path_request);
+                await new Promise(resolve => setTimeout(resolve, 3000));
             }
         }
     }
