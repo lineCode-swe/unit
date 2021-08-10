@@ -10,7 +10,6 @@ import {ModifyDetectedObstaclesUseCase} from "../Domain/in/ModifyDetectedObstacl
 import {UnitChangedStatusUseCase} from "../Domain/in/UnitChangedStatusUseCase";
 import {inject, injectable} from "tsyringe";
 import {UnitStatus} from "../UnitStatus";
-import {UnitChangedStatusService} from "../Domain/out/UnitChangedStatusService";
 
 @injectable()
 export class UnitEngine {
@@ -63,7 +62,7 @@ export class UnitEngine {
         console.log("Unit is running");
         while(this.status != UnitStatus.DISCONNECTED) {
             this.status = await this.UnitChangedStatus.checkIfUnitChangedStatus();
-            if (this.status == UnitStatus.STOP || this.status == UnitStatus.BASE) {
+            if (this.status == UnitStatus.STOP || this.status == UnitStatus.BASE || this.status == UnitStatus.ERROR) {
                 let new_path = await this.LoadPath.loadPath();
                 console.log("Checking for new path");
                 if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
@@ -78,7 +77,7 @@ export class UnitEngine {
                 }
                 await new Promise(resolve => setTimeout(resolve, this.speed));
             } else if (this.status == UnitStatus.GOINGTO) {
-                //console.log("Unit is starting");
+                console.log("Unit is starting");
                 this.obs = await this.CheckObstacles.checkObstacles();
                 let det_obs = this.checkForInboundObs(this.obs); // Controllo se ci sono ostacoli intorno all' unita
                 console.log("Obstacles found: " + JSON.stringify(det_obs));
@@ -90,7 +89,7 @@ export class UnitEngine {
 
                 if(this.curr_path_pos < this.curr_path_length) {
                     if(!block) {
-                        //console.log("No blocking obstacles, advancing");
+                        console.log("No blocking obstacles, advancing");
                         this.path_request = false;
                         this.setPathRequest(this.path_request);
                         this.curr_pos = this.path[this.curr_path_pos];
@@ -100,7 +99,7 @@ export class UnitEngine {
                         await new Promise(resolve => setTimeout(resolve, this.speed));
                         await this.updateStatus();
                     } else {
-                        //console.log("There is a blocking obstacle, stop");
+                        console.log("There is a blocking obstacle, stop");
                         this.error = 10;
                         this.status = UnitStatus.STOP;
                         this.setStatus(this.status);
@@ -119,10 +118,6 @@ export class UnitEngine {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                     }
                 }
-            } else if (this.status == UnitStatus.ERROR) {
-                this.path_request = true;
-                this.setPathRequest(this.path_request);
-                await new Promise(resolve => setTimeout(resolve, 3000));
             }
         }
     }
