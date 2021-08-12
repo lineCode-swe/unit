@@ -119,6 +119,12 @@ export class UnitEngine {
                     }
                 }
             }
+            if (this.status == UnitStatus.ERROR) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                this.path_request = true;
+                this.setPathRequest(this.path_request);
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            }
         }
     }
 
