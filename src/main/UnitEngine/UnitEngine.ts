@@ -75,6 +75,7 @@ export class UnitEngine {
                 console.log("Checking for new path");
                 if (this.received_start) {
                     this.received_start = false;
+                    this.ModifyReceivedStart.receivedNewReceivedStart(this.received_start);
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
