@@ -21,6 +21,8 @@ import { UnitDataAdapter } from "./Persistence/out/UnitDataAdapter";
 import { UnitEngine } from "./UnitEngine/UnitEngine";
 import { ServerMessageController } from "./Controllers/ServerMessageController";
 import {SensorMessageController} from "./Controllers/SensorMessageController";
+import {ModifyReceivedStartService} from "./Domain/out/ModifyReceivedStartService";
+import {LoadReceivedStartService} from "./Domain/out/LoadReceivedStartService";
 
 
 
@@ -41,6 +43,8 @@ container.register("ModifyErrorUseCase", { useClass: ModifyErrorService });
 container.register("ModifyStatusUseCase", { useClass: ModifyStatusService });
 container.register("LoadDetectedObstaclesUseCase", { useClass: LoadDetectedObstaclesService });
 container.register("ModifyDetectedObstaclesUseCase", { useClass: ModifyDetectedObstaclesService });
+container.register("LoadReceivedStartUseCase", { useClass: LoadReceivedStartService });
+container.register("ModifyReceivedStartUseCase", { useClass: ModifyReceivedStartService });
 
 // DI for Outbound Classes
 container.register("CheckErrorOutbound", { useClass: UnitDataAdapter });
@@ -59,6 +63,8 @@ container.register("UnitHasMovedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
 container.register("LoadDetectedObstaclesOutbound", { useClass: UnitDataAdapter });
 container.register("ModifyDetectedObstaclesOutbound", { useClass: UnitDataAdapter });
+container.register("ModifyReceivedStartOutbound", { useClass: UnitDataAdapter });
+container.register("LoadReceivedStartOutbound", { useClass: UnitDataAdapter });
 
 let id: any = process.env.UNIT_ID;
 

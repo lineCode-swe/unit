@@ -15,6 +15,8 @@ import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
 import {LoadDetectedObstaclesUseCase} from "../Domain/in/LoadDetectedObstaclesUseCase";
 import {ModifyErrorUseCase} from "../Domain/in/ModifyErrorUseCase";
 import {UnitEngine} from '../UnitEngine/UnitEngine';
+import {ModifyReceivedStartUseCase} from "../Domain/in/ModifyReceivedStartUseCase";
+import {LoadReceivedStartUseCase} from "../Domain/in/LoadReceivedStartUseCase";
 
 @injectable()
 export class ServerMessageController {
@@ -38,6 +40,8 @@ export class ServerMessageController {
                 @inject("ModifyPathRequestUseCase") private modifyPathRequest: ModifyPathRequestUseCase,
                 @inject("LoadDetectedObstaclesUseCase") private loadDetectedObstacles: LoadDetectedObstaclesUseCase,
                 @inject("ModifyErrorUseCase") private modifyError: ModifyErrorUseCase,
+                @inject("ModifyReceivedStartUseCase") private modifyReceivedStart: ModifyReceivedStartUseCase,
+                @inject("LoadReceivedStartUseCase") private loadReceivedStart: LoadReceivedStartUseCase,
                 @inject("WebSocketServer") private ws: WebSocket,
                 @inject("UnitEngine") private clientUnitEngine: UnitEngine) {
 
@@ -50,6 +54,7 @@ export class ServerMessageController {
             switch(msg.type) {
                 case "StartToUnit":
                     console.log("Received a start message");
+                    modifyReceivedStart.receivedNewReceivedStart(true);
                     console.log(msg.path);
                     modifyPath.receivedNewPath(msg.path);
                     break;

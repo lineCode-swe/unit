@@ -16,6 +16,8 @@ import { CheckErrorOutbound } from "../in/CheckErrorOutbound";
 import { ModifyDetectedObstaclesOutbound } from "../in/ModifyDetectedObstaclesOutbound";
 import { LoadDetectedObstaclesOutbound } from "../in/LoadDetectedObstaclesOutbound";
 import { UnitStatus } from "../../UnitStatus";
+import { LoadReceivedStartOutbound } from "../in/LoadReceivedStartOutbound";
+import { ModifyReceivedStartOutbound } from "../in/ModifyReceivedStartOutbound";
 
 const {MongoClient} = require('mongodb');
 
@@ -24,9 +26,56 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
                                         ModifyStatusOutbound, UnitChangedStatusOutbound, ModifyPathRequestOutbound, 
                                         UnitPathRequestOutbound, ModifySpeedOutbound, UnitChangedSpeedOutbound,
                                         ModifyErrorOutbound, CheckErrorOutbound, ModifyDetectedObstaclesOutbound,
-                                        LoadDetectedObstaclesOutbound {
+                                        LoadDetectedObstaclesOutbound, LoadReceivedStartOutbound, ModifyReceivedStartOutbound {
 
     constructor() {}
+
+    async loadReceivedStart(): Promise<boolean> {
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        try {
+            await client.connect();
+            const collection = client.db('Unit').collection('received_start');
+
+            const projection = { _id: 0, received_start:1 };
+            const cursor = collection.find().project(projection);
+            const results = await cursor.toArray();
+
+            if (results[0]) {
+                return results[0].received_start;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (e) {
+            throw(e);
+        }
+        finally {
+            await client.close();
+        }
+    }
+
+    async receivedStartToMongo(received_start: boolean): Promise<void> {
+        let url = "mongodb://localhost:27017/";
+        const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+        try {
+            await client.connect();
+            const collection = client.db('Unit').collection('received_start');
+
+            const query = { pathRequest: Boolean };
+            const update = { $set: { 'received_start': received_start }};
+            const options = { upsert: true };
+
+            await collection.updateOne(query, update, options);
+        }
+        catch (e) {
+            throw(e);
+        }
+        finally {
+            await client.close();
+        }
+    }
 
     async detectedObstaclesFromMongo(): Promise<Position[]> {
         let url = "mongodb://localhost:27017/";
@@ -51,7 +100,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         finally {
             await client.close();
         }
-    };
+    }
 
     async detectedObstaclesToMongo(obstacles: Position[]): Promise<void> {
         let url = "mongodb://localhost:27017/";
@@ -75,7 +124,7 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
         finally {
             await client.close();
         }
-    };
+    }
 
     async pathToMongo(path: Position[]): Promise<void> {
         let url = "mongodb://localhost:27017/";

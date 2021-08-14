@@ -10,10 +10,13 @@ import {ModifyDetectedObstaclesUseCase} from "../Domain/in/ModifyDetectedObstacl
 import {UnitChangedStatusUseCase} from "../Domain/in/UnitChangedStatusUseCase";
 import {inject, injectable} from "tsyringe";
 import {UnitStatus} from "../UnitStatus";
+import {LoadReceivedStartUseCase} from "../Domain/in/LoadReceivedStartUseCase";
+import {ModifyReceivedStartUseCase} from "../Domain/in/ModifyReceivedStartUseCase";
 
 @injectable()
 export class UnitEngine {
 
+    private received_start: boolean;
     private path: Position[];
     private curr_path_pos: number;
     private curr_path_length: number;
@@ -35,7 +38,11 @@ export class UnitEngine {
                 @inject("ModifyStatusUseCase") private ModifyStatus: ModifyStatusUseCase,
                 @inject("CheckObstaclesUseCase") private CheckObstacles: CheckObstaclesUseCase,
                 @inject("ModifyDetectedObstaclesUseCase") private ModifyDetectedObstacles: ModifyDetectedObstaclesUseCase,
-                @inject("UnitChangedStatusUseCase") private UnitChangedStatus: UnitChangedStatusUseCase) {
+                @inject("UnitChangedStatusUseCase") private UnitChangedStatus: UnitChangedStatusUseCase,
+                @inject("LoadReceivedStartUseCase") private LoadReceivedStart: LoadReceivedStartUseCase,
+                @inject("ModifyReceivedStartUseCase") private ModifyReceivedStart: ModifyReceivedStartUseCase
+    ) {
+        this.received_start = false;
         this.path = [ new Position(0, 0) ];
         this.curr_path_pos = 0;
         this.curr_path_length = this.path.length;
@@ -65,7 +72,8 @@ export class UnitEngine {
             if (this.status == UnitStatus.STOP || this.status == UnitStatus.BASE || this.status == UnitStatus.ERROR) {
                 let new_path = await this.LoadPath.loadPath();
                 console.log("Checking for new path");
-                if (JSON.stringify(new_path) != JSON.stringify(this.path)) {
+                if (this.received_start) {
+                    this.received_start = false;
                     this.path = new_path;
                     this.curr_path_length = this.path.length;
                     this.curr_path_pos = 0;
