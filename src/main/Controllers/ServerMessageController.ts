@@ -116,10 +116,10 @@ export class ServerMessageController {
             let curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
             let curr_obs = await this.loadDetectedObstacles.loadDetectedObstacles();
 
-            this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs, curr_error);
-            this.checkAndSendUnitError(curr_error);
-            this.checkAndSendUnitPathRequest(curr_path_request);
-            this.checkAndSendUnitStatus(curr_status);
+            await this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs, curr_error);
+            await this.checkAndSendUnitError(curr_error);
+            await this.checkAndSendUnitPathRequest(curr_path_request);
+            await this.checkAndSendUnitStatus(curr_status);
 
             await new Promise(resolve => setTimeout(resolve, 1500));
         }

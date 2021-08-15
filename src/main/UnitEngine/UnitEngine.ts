@@ -59,10 +59,6 @@ export class UnitEngine {
             "y": Number(process.env.UNIT_BASE_Y)
         }
         this.obs = []
-        /*this.unit_base_x = process.env.UNIT_BASE_X;
-        this.unit_base_y = process.env.UNIT_BASE_Y;
-        console.log(this.unit_base_x);
-        console.log(this.unit_base_y);*/
     };
 
     async begin(): Promise<void> {
@@ -94,7 +90,6 @@ export class UnitEngine {
 
                 this.ModifyDetectedObstacles.detectedObstacles(det_obs);
 
-
                 if(this.curr_path_pos < this.curr_path_length) {
                     if(!block) {
                         console.log("No blocking obstacles, advancing");
@@ -109,7 +104,7 @@ export class UnitEngine {
                     } else {
                         console.log("There is a blocking obstacle, stop");
                         this.error = 10;
-                        this.status = UnitStatus.STOP;
+                        this.status = UnitStatus.ERROR;
                         this.setStatus(this.status);
                         this.setError(10);
                         await new Promise(resolve => setTimeout(resolve, this.speed));
