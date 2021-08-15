@@ -68,25 +68,24 @@ export class UnitEngine {
     async begin(): Promise<void> {
         console.log("Unit is running");
         while(this.status != UnitStatus.DISCONNECTED) {
+            console.log("Checking for new path");
             this.received_start = await this.LoadReceivedStart.loadReceivedStart();
             this.status = await this.UnitChangedStatus.checkIfUnitChangedStatus();
-            if (this.status == UnitStatus.STOP || this.status == UnitStatus.BASE || this.status == UnitStatus.ERROR) {
-                let new_path = await this.LoadPath.loadPath();
-                console.log("Checking for new path");
-                if (this.received_start) {
-                    this.received_start = false;
-                    this.ModifyReceivedStart.receivedNewReceivedStart(this.received_start);
-                    this.path = new_path;
-                    this.curr_path_length = this.path.length;
-                    this.curr_path_pos = 0;
-                    this.error = 0;
-                    this.status = UnitStatus.GOINGTO;
-                    console.log(this.status);
-                    this.setStatus(this.status);
-                    this.setError(0);
-                }
-                await new Promise(resolve => setTimeout(resolve, this.speed));
-            } else if (this.status == UnitStatus.GOINGTO) {
+            
+            if (this.received_start) {
+                this.received_start = false;
+                this.ModifyReceivedStart.receivedNewReceivedStart(this.received_start);
+                this.path = await this.LoadPath.loadPath();
+                this.curr_path_length = this.path.length;
+                this.curr_path_pos = 0;
+                this.error = 0;
+                this.status = UnitStatus.GOINGTO;
+                console.log(this.status);
+                this.setStatus(this.status);
+                this.setError(0);
+            }
+
+            if (this.status == UnitStatus.GOINGTO) {
                 console.log("Unit is starting");
                 this.obs = await this.CheckObstacles.checkObstacles();
                 let det_obs = this.checkForInboundObs(this.obs); // Controllo se ci sono ostacoli intorno all' unita
@@ -128,8 +127,7 @@ export class UnitEngine {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                     }
                 }
-            }
-            if (this.status == UnitStatus.ERROR) {
+            } else if (this.status == UnitStatus.ERROR) {
                 await new Promise(resolve => setTimeout(resolve, 5000));
                 this.path_request = true;
                 this.setPathRequest(this.path_request);
