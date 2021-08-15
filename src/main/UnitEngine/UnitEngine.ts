@@ -68,10 +68,9 @@ export class UnitEngine {
     async begin(): Promise<void> {
         console.log("Unit is running");
         while(this.status != UnitStatus.DISCONNECTED) {
-            console.log("Checking for new path");
             this.received_start = await this.LoadReceivedStart.loadReceivedStart();
             this.status = await this.UnitChangedStatus.checkIfUnitChangedStatus();
-            
+
             if (this.received_start) {
                 this.received_start = false;
                 this.ModifyReceivedStart.receivedNewReceivedStart(this.received_start);
