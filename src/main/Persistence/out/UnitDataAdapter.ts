@@ -31,8 +31,6 @@ export class UnitDataAdapter implements ModifyPathOutbound, LoadPathOutbound, In
                                         UnitPathRequestOutbound, ModifySpeedOutbound, UnitChangedSpeedOutbound,
                                         ModifyErrorOutbound, CheckErrorOutbound {
 
-    constructor() {};
-
     async pathToMongo(path: Position[]): Promise<void> {
         let url = "mongodb://localhost:27017/";
         const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });

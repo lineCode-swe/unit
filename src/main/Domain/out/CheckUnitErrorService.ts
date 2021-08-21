@@ -16,6 +16,6 @@ export class CheckUnitErrorService implements CheckUnitErrorUseCase {
     constructor(@inject("CheckErrorOutbound") private outbound: CheckErrorOutbound) {}
 
     async checkIfUnitError(): Promise<number> {
-        return await this.outbound.loadError();
+        return this.outbound.loadError();
     }
 }

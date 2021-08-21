@@ -52,11 +52,7 @@ export class UnitEngine {
             "x": Number(process.env.UNIT_BASE_X),
             "y": Number(process.env.UNIT_BASE_Y)
         }
-        /*this.unit_base_x = process.env.UNIT_BASE_X;
-        this.unit_base_y = process.env.UNIT_BASE_Y;
-        console.log(this.unit_base_x);
-        console.log(this.unit_base_y);*/
-    };
+    }
 
     async begin(): Promise<void> {
         console.log("Unit is running");

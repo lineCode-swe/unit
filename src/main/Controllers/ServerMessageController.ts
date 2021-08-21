@@ -91,7 +91,7 @@ export class ServerMessageController {
         this.error = 0;
         this.path_request = false;
         this.running = false;
-    };
+    }
 
     async checkWebSocketStateBeforeRunning() {
         while(this.ws.readyState !== WebSocket.OPEN) {
@@ -153,7 +153,7 @@ export class ServerMessageController {
     async checkAndSendUnitPathRequest(pr: boolean) {
         if(pr != this.path_request) {
             this.path_request = pr;
-            if(this.path_request == true) {
+            if(this.path_request) {
                 let msg = {
                     "type": "PathRequestToServer"
                 }

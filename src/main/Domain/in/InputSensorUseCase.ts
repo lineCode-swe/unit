@@ -6,7 +6,6 @@
  * Distributed under ISC license (see accompanying file LICENSE).
  */
 
-// import {ObstacleMessageObj} from "../../ObstacleMessageObj";
 import {Position} from "../../Position";
 
 export interface InputSensorUseCase {

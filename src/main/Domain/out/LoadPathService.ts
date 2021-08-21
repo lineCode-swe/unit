@@ -17,6 +17,6 @@ export class LoadPathService implements LoadPathUseCase {
     constructor(@inject("LoadPathOutbound") private outbound: LoadPathOutbound) {}
 
     async loadPath(): Promise<Position[]> {
-        return await this.outbound.loadPath();
+        return this.outbound.loadPath();
     }
 }

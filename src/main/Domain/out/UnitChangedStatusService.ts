@@ -17,6 +17,6 @@ export class UnitChangedStatusService implements UnitChangedStatusUseCase {
     constructor(@inject("UnitChangedStatusOutbound") private outbound: UnitChangedStatusOutbound) {}
 
     async checkIfUnitChangedStatus(): Promise<UnitStatus> {
-        return await this.outbound.loadStatus();
+        return this.outbound.loadStatus();
     }
 }

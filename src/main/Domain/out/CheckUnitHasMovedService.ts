@@ -17,6 +17,6 @@ export class CheckUnitHasMovedService implements CheckUnitHasMovedUseCase {
     constructor(@inject("UnitHasMovedOutbound") private outbound: UnitHasMovedOutbound) {}
 
     async checkIfUnitHasMoved(): Promise<Position> {
-        return await this.outbound.loadPosition();
+        return this.outbound.loadPosition();
     }
 }

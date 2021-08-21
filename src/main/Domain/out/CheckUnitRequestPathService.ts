@@ -16,6 +16,6 @@ export class CheckUnitRequestPathService implements CheckUnitRequestPathUseCase 
     constructor(@inject("UnitPathRequestOutbound") private outbound: UnitPathRequestOutbound) {}
 
     async checkIfUnitRequestPath(): Promise<boolean> {
-        return await this.outbound.loadPathRequest();
+        return this.outbound.loadPathRequest();
     }
 }

@@ -16,6 +16,6 @@ export class CheckUnitChangedSpeedService implements CheckUnitChangedSpeedUseCas
     constructor(@inject("UnitChangedSpeedOutbound") private outbound: UnitChangedSpeedOutbound) {}
 
     async checkIfUnitChangedSpeed(): Promise<number> {
-        return await this.outbound.loadSpeed();
+        return this.outbound.loadSpeed();
     }
 }
