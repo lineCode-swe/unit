@@ -20,7 +20,11 @@ import {CheckObstaclesUseCase} from "../Domain/in/CheckObstaclesUseCase";
 import {CheckUnitHasMovedUseCase} from "../Domain/in/CheckUnitHasMovedUseCase";
 import {ModifyStatusUseCase} from "../Domain/in/ModifyStatusUseCase";
 import {ModifyPathRequestUseCase} from "../Domain/in/ModifyPathRequestUseCase";
+import {LoadDetectedObstaclesUseCase} from "../Domain/in/LoadDetectedObstaclesUseCase";
+import {ModifyErrorUseCase} from "../Domain/in/ModifyErrorUseCase";
 import {UnitEngine} from '../UnitEngine/UnitEngine';
+import {ModifyReceivedStartUseCase} from "../Domain/in/ModifyReceivedStartUseCase";
+import {LoadReceivedStartUseCase} from "../Domain/in/LoadReceivedStartUseCase";
 
 @injectable()
 export class ServerMessageController {
@@ -42,7 +46,11 @@ export class ServerMessageController {
                 @inject("CheckUnitHasMovedUseCase") private checkUnitHasMoved: CheckUnitHasMovedUseCase,
                 @inject("ModifyStatusUseCase") private modifyStatus: ModifyStatusUseCase,
                 @inject("ModifyPathRequestUseCase") private modifyPathRequest: ModifyPathRequestUseCase,
-                @inject("WebSocket") private ws: WebSocket,
+                @inject("LoadDetectedObstaclesUseCase") private loadDetectedObstacles: LoadDetectedObstaclesUseCase,
+                @inject("ModifyErrorUseCase") private modifyError: ModifyErrorUseCase,
+                @inject("ModifyReceivedStartUseCase") private modifyReceivedStart: ModifyReceivedStartUseCase,
+                @inject("LoadReceivedStartUseCase") private loadReceivedStart: LoadReceivedStartUseCase,
+                @inject("WebSocketServer") private ws: WebSocket,
                 @inject("UnitEngine") private clientUnitEngine: UnitEngine) {
 
         this.ws.on('open', function open(): any {
@@ -50,10 +58,11 @@ export class ServerMessageController {
         });
         
         this.ws.on('message', function incoming(data): any {
-            var msg: any = JSON.parse(data.toString());
+            let msg: any = JSON.parse(data.toString());
             switch(msg.type) {
                 case "StartToUnit":
                     console.log("Received a start message");
+                    modifyReceivedStart.receivedNewReceivedStart(true);
                     console.log(msg.path);
                     modifyPath.receivedNewPath(msg.path);
                     break;
@@ -81,7 +90,7 @@ export class ServerMessageController {
         });
         
         this.ws.on('error', function error(err) {
-            console.log("An internal error has occurred");
+            console.log("An internal error in server websocket has occurred");
             console.log(err);    
         });
        
@@ -109,31 +118,43 @@ export class ServerMessageController {
 
     async sendUnitInfo(): Promise<void> {
         while(this.running) {
-            const curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
-            const curr_error = await this.checkUnitError.checkIfUnitError();
-            const curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
-            const curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
-            console.log(curr_status);
-            //const newObstacles = await this.checkObstacles.checkObstacles();
+            let curr_position = await this.checkUnitHasMoved.checkIfUnitHasMoved();
+            let curr_error = await this.checkUnitError.checkIfUnitError();
+            let curr_path_request = await this.checkUnitRequestPath.checkIfUnitRequestPath();
+            let curr_status = await this.unitChangedStatus.checkIfUnitChangedStatus();
+            let curr_obs = await this.loadDetectedObstacles.loadDetectedObstacles();
 
-            this.checkAndSendUnitPosition(curr_position);
-            this.checkAndSendUnitError(curr_error);
-            this.checkAndSendUnitPathRequest(curr_path_request);
-            this.checkAndSendUnitStatus(curr_status);
+            await this.checkAndSendUnitPositionAndObstacles(curr_position, curr_obs, curr_error);
+            await this.checkAndSendUnitError(curr_error);
+            await this.checkAndSendUnitPathRequest(curr_path_request);
+            await this.checkAndSendUnitStatus(curr_status);
 
             await new Promise(resolve => setTimeout(resolve, 1500));
         }
     }
 
-    async checkAndSendUnitPosition(pos: Position) {
+    async checkAndSendUnitPositionAndObstacles(pos: Position, obs: Position[], err: number) {
         if(JSON.stringify(pos) != JSON.stringify(this.pos)) {
             this.pos = pos;
             let msg = {
                 "type": "PositionToServer",
-                "position": this.pos
+                "position": this.pos,
+                "obstacles": obs
             }
+            console.log(msg);
             this.ws.send(JSON.stringify(msg));
-            console.log("sending pos...");
+            console.log("sending pos and obstacles: position changes");
+        } else if(err == 10) {
+            this.modifyError.modifyError(1);
+            this.pos = pos;
+            let msg = {
+                "type": "PositionToServer",
+                "position": this.pos,
+                "obstacles": obs
+            }
+            console.log(msg);
+            this.ws.send(JSON.stringify(msg));
+            console.log("sending pos and obstacles: found obstacles");
         }
     }
 

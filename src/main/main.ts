@@ -23,9 +23,16 @@ import { CheckUnitRequestPathService } from "./Domain/out/CheckUnitRequestPathSe
 import { UnitChangedStatusService } from "./Domain/out/UnitChangedStatusService";
 import { ModifyPathService } from "./Domain/out/ModifyPathService";
 import { InputSensorService } from "./Domain/out/InputSensorService";
+import { ModifyDetectedObstaclesService } from "./Domain/out/ModifyDetectedObstaclesService";
+import { LoadDetectedObstaclesService } from "./Domain/out/LoadDetectedObstaclesService";
 import { UnitDataAdapter } from "./Persistence/out/UnitDataAdapter"; 
 import { UnitEngine } from "./UnitEngine/UnitEngine";
 import { ServerMessageController } from "./Controllers/ServerMessageController";
+import {SensorMessageController} from "./Controllers/SensorMessageController";
+import {ModifyReceivedStartService} from "./Domain/out/ModifyReceivedStartService";
+import {LoadReceivedStartService} from "./Domain/out/LoadReceivedStartService";
+
+
 
 // DI for UseCase Classes
 container.register("CheckObstaclesUseCase", { useClass: CheckObstaclesService });
@@ -42,6 +49,10 @@ container.register("LoadPathUseCase", { useClass: LoadPathService });
 container.register("ModifySpeedUseCase", { useClass: ModifySpeedService });
 container.register("ModifyErrorUseCase", { useClass: ModifyErrorService });
 container.register("ModifyStatusUseCase", { useClass: ModifyStatusService });
+container.register("LoadDetectedObstaclesUseCase", { useClass: LoadDetectedObstaclesService });
+container.register("ModifyDetectedObstaclesUseCase", { useClass: ModifyDetectedObstaclesService });
+container.register("LoadReceivedStartUseCase", { useClass: LoadReceivedStartService });
+container.register("ModifyReceivedStartUseCase", { useClass: ModifyReceivedStartService });
 
 // DI for Outbound Classes
 container.register("CheckErrorOutbound", { useClass: UnitDataAdapter });
@@ -58,20 +69,29 @@ container.register("UnitChangedSpeedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitChangedStatusOutbound", { useClass: UnitDataAdapter });
 container.register("UnitHasMovedOutbound", { useClass: UnitDataAdapter });
 container.register("UnitPathRequestOutbound", { useClass: UnitDataAdapter });
+container.register("LoadDetectedObstaclesOutbound", { useClass: UnitDataAdapter });
+container.register("ModifyDetectedObstaclesOutbound", { useClass: UnitDataAdapter });
+container.register("ModifyReceivedStartOutbound", { useClass: UnitDataAdapter });
+container.register("LoadReceivedStartOutbound", { useClass: UnitDataAdapter });
 
 let id: any = process.env.UNIT_ID;
 
-let url: any = 'ws://server:8080/unit/' + id;
+let urlServer: any = 'ws://server:8080/unit/' + id;
+let urlSensors: any = 'ws://sensors:8082';
 
-let ws: WebSocket = new WebSocket(url);
+let wsServer: WebSocket = new WebSocket(urlServer);
+let wsSensors: WebSocket = new WebSocket(urlSensors);
 
-container.register("WebSocket", { useValue: ws });
+container.register("WebSocketServer", { useValue: wsServer });
+container.register("WebSocketSensors", { useValue: wsSensors });
 
 const clientUnitEngine = container.resolve(UnitEngine);
 
 container.register("UnitEngine", { useValue: clientUnitEngine });
 
+const clientSensorsController = container.resolve(SensorMessageController);
 const clientServerController = container.resolve(ServerMessageController);
+
 
 wait();
 
