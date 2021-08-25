@@ -19,7 +19,7 @@ Dipendenze:
  
  Compilazione dell'applicativo con:
   ```shell
- npx tsc src/main.ts
+ npx tsc src/main/main.ts
  ```
  
  Creazione della Docker image:
